@@ -1,11 +1,13 @@
 # Технологии разработки программного обеспечения
 ### Корнеев А.Д. ПИМО-01-24
 
-### Практическая работа №4
-## 1. Задачи на линейное программирование (без условных операторов и циклов)
+### Практическая работа №5
 
-### Задание 1.1.
-Напишите программу, которая принимает целое число и вычисляет сумму его цифр.
+# Задачи по языку программирования Go
+1. **Проверка на простоту**
+   
+Напишите функцию, которая проверяет, является ли переданное число простым. Ваша программа должна использовать циклы для проверки делителей,
+и если число не является простым, выводить первый найденный делитель.
 ```go
 package main
 
@@ -13,438 +15,78 @@ import (
 	"fmt"
 )
 
-func addNumberDigits(number int32) int32 {
-	var sum int32
-	//Максимальное количество цифр в числе типа int32 - 10, 
-	//поэтому повторяем операцию 10 раз, чтобы не использовать цикл
-	sum += number % 10
-	number /= 10
-
-	sum += number % 10
-	number /= 10
-	
-	sum += number % 10
-	number /= 10
-
-	sum += number % 10
-	number /= 10
-
-	sum += number % 10
-	number /= 10
-
-	sum += number % 10
-	number /= 10
-
-	sum += number % 10
-	number /= 10
-
-	sum += number % 10
-	number /= 10
-
-	sum += number % 10
-	number /= 10
-
-	sum += number % 10
-	number /= 10
-
-	return sum
-}
-
-func main() {
-	fmt.Println(addNumberDigits(2_147_483_647))
-}
-```
-
-### Задание 1.2.
-Напишите программу, которая преобразует температуру из градусов Цельсия в Фаренгейты и обратно. 
-```go
-package main
-
-import (
-	"fmt"
-  "strconv"
-	"strings"
-)
-
-func mapToCelsius(temp int) float32 {
-	return (float32)(temp+32) / 1.8
-}
-
-func mapToFahrenheit(temp int) float32 {
-	return float32(temp)*1.8 + 32
-}
-
-func main() {
-	string1 := "25 (Celsius)"
-  //Получаем значение градуса из входной строки и приводим к типу int
-	temp1, _ := strconv.Atoi(strings.Split(string1, " ")[0])
-
-	fmt.Printf("%f (Farhrenheit)\n", mapToFahrenheit(temp1))
-
-	string2 := "32 (Farhrenheit)"
-  //Получаем значение градуса из входной строки и приводим к типу int
-	temp2, _ := strconv.Atoi(strings.Split(string2, " ")[0])
-
-	fmt.Printf("%f (Celsius)\n", mapToCelsius(temp2))
-
-}
-```
-
-### Задание 1.3.
-Напишите программу, которая принимает массив чисел и возвращает новый массив, где каждое число удвоено.
-```go
-package main
-
-import (
-	"fmt"
-)
-
-func double_int_array(arr [4]int) [4]int {
-	arr[0] *= 2
-	arr[1] *= 2
-	arr[2] *= 2
-	arr[3] *= 2
-
-	return arr
-}
-
-func main() {
-	test_array := [4]int{1, 2, 3, 4}
-	double_test_array := double_int_array(test_array)
-	fmt.Print(double_test_array)
-}
-
-```
-
-### Задание 1.4.
-Напишите программу, которая принимает несколько строк и объединяет их в одну строку через пробел.
-```go
-package main
-
-import (
-	"fmt"
-	"strings"
-)
-
-func concatStrings(stringsArr []string) string {
-
-	return strings.Join(stringsArr, " ")
-
-}
-
-func main() {
-	strings := []string{"Strings", "array", "to", "concat"}
-	stringConcat := concatStrings(strings)
-
-	fmt.Println(stringConcat)
-}
-
-```
-
-### Задание 1.5.
-Напишите программу, которая вычисляет расстояние между двумя точками в 2D пространстве.
-```go
-package main
-
-import (
-	"fmt"
-	"math"
-)
-
-func getDistance(x1 float64, y1 float64, x2 float64, y2 float64) float64 {
-	return math.Sqrt(math.Pow(x2-x1, 2) + math.Pow(y2-y1, 2))
-}
-
-func main() {
-  var x1, x2, y1, y2 float64
-
-	fmt.Println("Введите координаты первой точки: ")
-	fmt.Scan(&x1, &y1)
-
-	fmt.Println("Введите координаты второй точки: ")
-	fmt.Scan(&x2, &y2)
-
-	fmt.Println(getDistance(x1, y1, x2, y2))
-}
-```
-
-## 2. Задачи с условным оператором
-
-### Задание 2.1.
-Напишите программу, которая проверяет, является ли введенное число четным или нечетным.
-```go
-package main
-
-import (
-	"fmt"
-)
-
-func isOdd(number int) bool {
-	return number%2 == 0
-}
-
-func main() {
-	var num int
-	fmt.Println("Введите число")
-	fmt.Scan(&num)
-
-	if isOdd(num) {
-		fmt.Println("Чётное")
-	} else {
-		fmt.Println("Нечётное")
-	}
-}
-```
-
-### Задание 2.2.
-Напишите программу, которая проверяет, является ли введенный год високосным.
-```go
-package main
-
-import (
-	"fmt"
-)
-
-func isLeapYear(year int) bool {
-	return year%4 == 0 && (year%100 != 0 || year%400 == 0)
-}
-
-func main() {
-	var year int
-	fmt.Println("Введите число")
-	fmt.Scan(&year)
-
-	if isLeapYear(year) {
-		fmt.Println("Високосный")
-	} else {
-		fmt.Println("Не високосный")
-	}
-}
-```
-
-### Задание 2.3.
-Напишите программу, которая принимает три числа и выводит наибольшее из них.
-```go
-package main
-
-import (
-	"fmt"
-)
-
-func findMax(num1 int, num2 int, num3 int) int {
-	isFirstBiggerSecond := num1 > num2
-	isFirstBiggerThird := num1 > num3
-	isSecondBiggerThird := num2 > num3
-
-	if isFirstBiggerSecond && isFirstBiggerThird {
-		return num1
-	}
-
-	if !isFirstBiggerSecond && isSecondBiggerThird {
-		return num2
-	}
-
-	return num3
-}
-
-func main() {
-	var num1, num2, num3 int
-	fmt.Println("Введите числа")
-	fmt.Scan(&num1, &num2, &num3)
-
-	maxNum := findMax(num1, num2, num3)
-	fmt.Println(maxNum)
-}
-```
-
-### Задание 2.4.
-Напишите программу, которая принимает возраст человека и выводит, к какой возрастной группе он относится (ребенок, подросток, взрослый, пожилой. В комментариях указать возрастные рамки).
-```go
-package main
-
-import (
-	"fmt"
-)
-
-func getAgeGroup(age int) string {
-	//ребенок 0 - 13, подросток 14 - 21, взрослый 22 - 59, пожилой >60
-	if age >= 0 && age < 13 {
-		return "ребенок"
-	}
-
-	if age >= 14 && age < 21 {
-		return "подросток"
-	}
-
-	if age >= 22 && age < 59 {
-		return "взрослый"
-	}
-
-	if age >= 60 {
-		return "пожилой"
-	}
-
-	return "Некорректное значение"
-}
-
-func main() {
-	var age int
-	fmt.Println("Введите возраст")
-	fmt.Scan(&age)
-
-	fmt.Println(getAgeGroup(age))
-}
-```
-
-### Задание 2.5.
-Напишите программу, которая проверяет, делится ли число одновременно на 3 и 5.
-```go
-package main
-
-import (
-	"fmt"
-)
-
-func isDivided5and3(num int) bool {
-	return num%3 == 0 && num%5 == 0
-}
-
-func main() {
-	var num int
-	fmt.Println("Введите число")
-	fmt.Scan(&num)
-
-	if isDivided5and3(num) {
-		fmt.Println("Делится")
-	} else {
-		fmt.Println("Не делится")
-	}
-}
-```
-
-## 3. Задачи на циклы
-### Задание 3.1.
-Напишите программу, которая вычисляет факториал числа.
-```go
-package main
-
-import (
-	"fmt"
-)
-
-func factorial(number int) int {
-	if number == 0 || number == 1 {
+func isPrime(number uint) uint {
+	if number <= 1 {
 		return 1
 	}
-
-	return number * factorial(number-1)
-}
-
-func main() {
-	number := 5
-	fmt.Println(factorial(number))
-}
-```
-
-### Задание 3.2.
-Напишите программу, которая выводит первые "n" чисел Фибоначчи.
-```go
-package main
-
-import (
-	"fmt"
-	"os"
-)
-
-func fibonachiNumber(num int) int {
-	if num == 0 || num == 1 {
-		return num
-	}
-
-	return fibonachiNumber(num-1) + fibonachiNumber(num-2)
-}
-
-func main() {
-	var n int
-	fmt.Scan(&n)
-
-	for i := 0; i <= n; i++ {
-		fmt.Print(fibonachiNumber(i), " ")
-	}
-}
-```
-
-### Задание 3.3.
-Напишите программу, которая переворачивает массив чисел.
-```go
-package main
-
-import (
-	"fmt"
-  "math/rand/v2"
-)
-
-func reverce(array []int) []int {
-	for i := 0; i < len(array)/2; i++ {
-		temp := array[i]
-		array[i] = array[len(array)-1-i]
-		array[len(array)-1-i] = temp
-	}
-
-	return array
-}
-
-func main() {
-	var arrSize int
-	fmt.Println("Введите количество элементов в массиве: ")
-	fmt.Scan(&arrSize)
-
-	array := make([]int, arrSize)
-
-	for i := 0; i < arrSize; i++ {
-		array[i] = rand.IntN(100)
-	}
-
-	fmt.Println(array)
-	fmt.Println(reverce(array))
-}
-```
-
-### Задание 3.4.
-Напишите программу, которая выводит все простые числа до заданного числа.
-```go
-package main
-
-import (
-	"fmt"
-)
-
-func isPrime(num int) bool {
-	if num == 2 {
-		return true
-	}
-	for i := 2; i < num; i++ {
-		if num%i == 0 {
-			return false
+	for i := uint(2); i < number; i++ {
+		if number%i == 0 {
+			return i
 		}
 	}
-	return true
+
+	return 0
 }
 
 func main() {
-	var n int
-	fmt.Scan(&n)
-	for i := 2; i < n; i++ {
-		if isPrime(i) {
-			fmt.Print(i, " ")
-		}
+	var num uint
+	fmt.Println("Введите число")
+	fmt.Scan(&num)
+
+	isPrime := isPrime(num)
+
+	switch isPrime {
+	case 0:
+		fmt.Println("Число простое")
+		break
+	case 1:
+		fmt.Println("Не простое (1 или 0)")
+		break
+
+	default:
+		fmt.Printf("Число составное, наименьший делитель - %d", isPrime)
 	}
 }
 
 ```
 
-### Задание 3.5.
-Напишите программу, которая вычисляет сумму всех чисел в массиве.
+2. **Наибольший общий делитель (НОД)**
+
+Напишите программу для нахождения наибольшего общего делителя (НОД) двух чисел с использованием алгоритма Евклида. Используйте цикл `for` для вычислений
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	var a uint
+	fmt.Println("Введите число a")
+	fmt.Scan(&a)
+
+	var b uint
+	fmt.Println("Введите число b")
+	fmt.Scan(&b)
+
+	for a != b {
+		if a > b {
+			a -= b
+		} else {
+			b -= a
+		}
+	}
+
+	fmt.Print(a)
+}
+
+```
+
+3. **Сортировка пузырьком**
+   
+Реализуйте сортировку пузырьком для списка целых чисел. Программа должна выполнять сортировку на месте и выводить каждый шаг изменения массива
+
 ```go
 package main
 
@@ -453,27 +95,128 @@ import (
 	"math/rand/v2"
 )
 
-func sumArray(array []int) int {
-	var sum int
-	for _, element := range array {
-		sum += element
+func bubbleSort(array []int) []int {
+	for i := 0; i < len(array); i++ {
+		for j := 0; j < len(array)-1; j++ {
+			if array[j] < array[j+1] {
+				temp := array[j]
+				array[j] = array[j+1]
+				array[j+1] = temp
+			}
+			fmt.Println(array)
+		}
 	}
 
-	return sum
+	return array
 }
 
 func main() {
-	var arrSize int
-	fmt.Println("Введите количество элементов в массиве: ")
-	fmt.Scan(&arrSize)
 
-	array := make([]int, arrSize)
+	var n int
+	fmt.Println("Введите размер массива")
+	fmt.Scan(&n)
 
-	for i := 0; i < arrSize; i++ {
+	array := make([]int, n)
+
+	for i := 0; i < len(array); i++ {
 		array[i] = rand.IntN(100)
 	}
-	fmt.Println(array)
-	fmt.Println(sumArray(array))
+
+	fmt.Println("Source array: ", array)
+	fmt.Println("Sorted array: ", bubbleSort(array))
+
 }
 
 ```
+
+4. **Таблица умножения в формате матрицы** 
+
+Напишите программу, которая выводит таблицу умножения в формате матрицы 10x10. Используйте циклы для генерации строк и столбцов
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func mulMatrix(size int) [][]int {
+	matrix := make([][]int, size)
+
+	for i := range matrix {
+		matrix[i] = make([]int, size)
+	}
+
+	for i := 0; i < size; i++ {
+		for j := 0; j < size; j++ {
+			matrix[i][j] = (i + 1) * (j + 1)
+		}
+	}
+
+	return matrix
+}
+
+func main() {
+
+	var n int
+	fmt.Println("Введите размер таблицы умножения")
+	fmt.Scan(&n)
+	matrix := mulMatrix(n)
+	for i := 0; i < n; i++ {
+		fmt.Println(strings.Trim(strings.Replace(fmt.Sprint(matrix[i]), " ", "\t", -1), "[]"))
+	}
+
+}
+
+```
+
+5. **Фибоначчи с мемоизацией**
+
+Напишите функцию для вычисления числа Фибоначчи с использованием мемоизации (сохранение ранее вычисленных результатов). Программа должна использовать рекурсию и условные операторы.
+
+6. **Обратные числа**
+
+Напишите программу, которая принимает целое число и выводит его в обратном порядке. Например, для числа 12345 программа должна вывести 54321. Используйте цикл для обработки цифр числа.
+
+7. **Треугольник Паскаля**
+
+Напишите программу, которая выводит треугольник Паскаля до заданного уровня. Для этого используйте цикл и массивы для хранения предыдущих значений строки треугольника.
+
+8. **Число палиндром**
+
+Напишите программу, которая проверяет, является ли число палиндромом (одинаково читается слева направо и справа налево). Не используйте строки для решения этой задачи — работайте только с числами.
+
+9. **Нахождение максимума и минимума в массиве**
+
+Напишите функцию, которая принимает массив целых чисел и возвращает одновременно максимальный и минимальный элемент с использованием одного прохода по массиву.
+
+10. **Игра "Угадай число"**
+
+Напишите программу, которая загадывает случайное число от 1 до 100, а пользователь пытается его угадать. Программа должна давать подсказки \"больше\" или \"меньше\" после каждой попытки. Реализуйте ограничение на количество попыток.
+
+11. **Числа Армстронга**
+
+Напишите программу, которая проверяет, является ли число числом Армстронга (число равно сумме своих цифр, возведённых в степень, равную количеству цифр числа). Например, 153 = 1³ + 5³ + 3³.
+
+12. **Подсчет слов в строке**
+
+Напишите программу, которая принимает строку и выводит количество уникальных слов в ней. Используйте `map` для хранения слов и их количества.
+
+13. **Игра "Жизнь" (Conway's Game of Life)** 
+
+Реализуйте клеточный автомат "Жизнь" Конвея для двухмерного массива. Каждая клетка может быть либо живой, либо мертвой. На каждом шаге состояния клеток изменяются по следующим правилам:
+- Живая клетка с двумя или тремя живыми соседями остаётся живой, иначе умирает.
+- Мёртвая клетка с тремя живыми соседями оживает.
+Используйте циклы для обработки клеток.
+
+14. **Цифровой корень числа** 
+
+Напишите программу, которая вычисляет цифровой корень числа. Цифровой корень — это рекурсивная сумма цифр числа, пока не останется только одна цифра. Например, цифровой корень числа 9875 равен 2, потому что 
+9+8+7+5=29 → 2+9=11 → 1+1=2
+
+15. **Римские цифры**
+    
+Напишите функцию, которая преобразует арабское число (например, 1994) в римское (например, \"MCMXCIV\").
+Программа должна использовать циклы и условные операторы для создания римской записи.
+      
