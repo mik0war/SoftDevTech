@@ -301,6 +301,47 @@ func main() {
 Напишите программу, которая проверяет, является ли число палиндромом (одинаково читается слева направо и справа налево). Не используйте строки для решения этой задачи — работайте только с числами.
 
 ```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+func reverceNumber(n int) int {
+	if n < 0 {
+		errors.New("Illegal argument")
+	}
+
+	result := 0
+
+	for n > 0 {
+		result = result*10 + (n % 10)
+		n /= 10
+	}
+
+	return result
+}
+
+func isPalindrome(number int) bool {
+	return number == reverceNumber(number)
+}
+
+func main() {
+
+	for true {
+		var n int
+		fmt.Println("Введите число")
+		fmt.Scan(&n)
+
+		if isPalindrome(n) {
+			fmt.Println("Палиндром")
+		} else {
+			fmt.Println("Не палиндром")
+		}
+	}
+
+}
 
 ```
 
@@ -309,6 +350,51 @@ func main() {
 Напишите функцию, которая принимает массив целых чисел и возвращает одновременно максимальный и минимальный элемент с использованием одного прохода по массиву.
 
 ```go
+package main
+
+import (
+	"fmt"
+	"math/rand/v2"
+)
+
+func minMax(array []int) (int, int) {
+
+	//Помещаем максимальное значение int в переменную min
+	min := int(^uint(0) >> 1)
+	//Помещаем минимальное значение int в переменную max
+	max := -min - 1
+
+	for _, element := range array {
+
+		if element > max {
+			max = element
+		}
+
+		if element < min {
+			min = element
+		}
+	}
+
+	return min, max
+}
+
+func main() {
+
+	for true {
+		var n int
+		fmt.Println("Введите размер массива")
+		fmt.Scan(&n)
+
+		array := make([]int, n)
+
+		for i := 0; i < n; i++ {
+			array[i] = rand.IntN(1000) - 500
+		}
+		fmt.Println("Source array: ", array)
+		fmt.Println(minMax(array))
+	}
+
+}
 
 ```
 
@@ -321,6 +407,42 @@ func main() {
 Напишите программу, которая проверяет, является ли число числом Армстронга (число равно сумме своих цифр, возведённых в степень, равную количеству цифр числа). Например, 153 = 1³ + 5³ + 3³.
 
 ```go
+package main
+
+import (
+	"fmt"
+	"math/rand/v2"
+)
+
+func main() {
+
+	var attempts int
+	fmt.Println("Количество попыток:")
+	fmt.Scan(&attempts)
+
+	n := rand.IntN(101) + 1
+	var choice int
+
+	for i := 0; i < attempts; i++ {
+		fmt.Println("Попытка: ")
+		fmt.Scan(&choice)
+
+		if choice == n {
+			fmt.Println("Ты выиграл, число - ", n)
+			return
+		}
+
+		if choice > n {
+			fmt.Println("Загаданное число меньше чем ", choice)
+			continue
+		}
+
+		fmt.Println("Загаданное число больше чем ", choice)
+	}
+
+	fmt.Println("Ты проиграл( Загадано было число ", n)
+
+}
 
 ```
 
@@ -329,6 +451,41 @@ func main() {
 Напишите программу, которая принимает строку и выводит количество уникальных слов в ней. Используйте `map` для хранения слов и их количества.
 
 ```go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+)
+
+func getWordsCount(words string) map[string]int {
+
+	wordsMap := map[string]int{}
+
+	for _, word := range strings.Fields(words) {
+		_, ok := wordsMap[word]
+
+		if ok {
+			wordsMap[word]++
+		} else {
+			wordsMap[word] = 1
+		}
+
+	}
+
+	return wordsMap
+}
+
+func main() {
+
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	words := scanner.Text()
+
+	fmt.Println(getWordsCount(words))
+}
 
 ```
 
