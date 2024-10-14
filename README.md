@@ -3,4 +3,4 @@
 
 ### Практическая работа №4
 ## Class diagram
-![Uploading ClassLibrary.svg…]()
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/library_class/ClassLibrary.svg)
