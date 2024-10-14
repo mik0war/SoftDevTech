@@ -223,14 +223,13 @@ func main() {
 	fmt.Println("Введите число")
 	fmt.Scan(&year)
 
-	//2.3
 	if isLeapYear(year) {
 		fmt.Println("Високосный")
 	} else {
 		fmt.Println("Не високосный")
 	}
 
-	//2.4
+	//2.3
 	var num1, num2, num3 int
 	fmt.Println("Введите числа")
 	fmt.Scan(&num1, &num2, &num3)
@@ -238,14 +237,14 @@ func main() {
 	maxNum := findMax(num1, num2, num3)
 	fmt.Println(maxNum)
 
-	//2.5
+	//2.4
 	var age int
 	fmt.Println("Введите возраст")
 	fmt.Scan(&age)
 
 	fmt.Println(getAgeGroup(age))
 
-	//2.6
+	//2.5
 	var num53 int
 	fmt.Println("Введите число")
 	fmt.Scan(&num53)
