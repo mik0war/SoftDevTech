@@ -50,7 +50,8 @@ func main() {
 
 ```
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_1.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_1.PNG)
 
 2. **Наибольший общий делитель (НОД)**
 
@@ -86,7 +87,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_2.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_2.PNG)
 
 3. **Сортировка пузырьком**
    
@@ -135,7 +137,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_3.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_3.PNG)
 
 4. **Таблица умножения в формате матрицы** 
 
@@ -180,7 +183,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_4.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_4.PNG)
 
 5. **Фибоначчи с мемоизацией**
 
@@ -225,7 +229,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_5.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_5.PNG)
 
 6. **Обратные числа**
 
@@ -266,8 +271,10 @@ func main() {
 
 }
 ```
+
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_6.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_6.PNG)
 
 7. **Треугольник Паскаля**
 
@@ -313,7 +320,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_7.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_7.PNG)
 
 8. **Число палиндром**
 
@@ -365,7 +373,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_8.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_8.PNG)
 
 9. **Нахождение максимума и минимума в массиве**
 
@@ -421,7 +430,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_9.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_9.PNG)
 
 10. **Игра "Угадай число"**
 
@@ -468,7 +478,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_10.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_10.PNG)
 
 11. **Числа Армстронга**
 
@@ -518,7 +529,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_11.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_11.PNG)
 
 12. **Подсчет слов в строке**
 
@@ -564,7 +576,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_12.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_12.PNG)
 
 13. **Игра "Жизнь" (Conway's Game of Life)** 
 
@@ -661,7 +674,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_13.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_13.PNG)
 
 14. **Цифровой корень числа** 
 
@@ -702,7 +716,8 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_14.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_14.PNG)
 
 15. **Римские цифры**
     
@@ -778,5 +793,6 @@ func main() {
 ```
 
 **Результат** 
-![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_15.PNG)
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr5/images/5_15.PNG)
       
