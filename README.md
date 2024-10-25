@@ -49,6 +49,8 @@ func main() {
 }
 
 ```
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_1.PNG)
 
 2. **Наибольший общий делитель (НОД)**
 
@@ -82,6 +84,9 @@ func main() {
 }
 
 ```
+
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_2.PNG)
 
 3. **Сортировка пузырьком**
    
@@ -129,6 +134,9 @@ func main() {
 
 ```
 
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_3.PNG)
+
 4. **Таблица умножения в формате матрицы** 
 
 Напишите программу, которая выводит таблицу умножения в формате матрицы 10x10. Используйте циклы для генерации строк и столбцов
@@ -170,6 +178,9 @@ func main() {
 }
 
 ```
+
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_4.PNG)
 
 5. **Фибоначчи с мемоизацией**
 
@@ -213,6 +224,9 @@ func main() {
 
 ```
 
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_5.PNG)
+
 6. **Обратные числа**
 
 Напишите программу, которая принимает целое число и выводит его в обратном порядке. Например, для числа 12345 программа должна вывести 54321. Используйте цикл для обработки цифр числа.
@@ -251,8 +265,10 @@ func main() {
 	}
 
 }
-
 ```
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_6.PNG)
+
 7. **Треугольник Паскаля**
 
 Напишите программу, которая выводит треугольник Паскаля до заданного уровня. Для этого используйте цикл и массивы для хранения предыдущих значений строки треугольника.
@@ -295,6 +311,9 @@ func main() {
 }
 
 ```
+
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_7.PNG)
 
 8. **Число палиндром**
 
@@ -344,6 +363,9 @@ func main() {
 }
 
 ```
+
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_8.PNG)
 
 9. **Нахождение максимума и минимума в массиве**
 
@@ -398,6 +420,9 @@ func main() {
 
 ```
 
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_9.PNG)
+
 10. **Игра "Угадай число"**
 
 Напишите программу, которая загадывает случайное число от 1 до 100, а пользователь пытается его угадать. Программа должна давать подсказки \"больше\" или \"меньше\" после каждой попытки. Реализуйте ограничение на количество попыток.
@@ -441,6 +466,9 @@ func main() {
 }
 
 ```
+
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_10.PNG)
 
 11. **Числа Армстронга**
 
@@ -489,6 +517,9 @@ func main() {
 
 ```
 
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_11.PNG)
+
 12. **Подсчет слов в строке**
 
 Напишите программу, которая принимает строку и выводит количество уникальных слов в ней. Используйте `map` для хранения слов и их количества.
@@ -531,6 +562,9 @@ func main() {
 }
 
 ```
+
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_12.PNG)
 
 13. **Игра "Жизнь" (Conway's Game of Life)** 
 
@@ -626,6 +660,9 @@ func main() {
 }
 ```
 
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_13.PNG)
+
 14. **Цифровой корень числа** 
 
 Напишите программу, которая вычисляет цифровой корень числа. Цифровой корень — это рекурсивная сумма цифр числа, пока не останется только одна цифра. Например, цифровой корень числа 9875 равен 2, потому что 
@@ -663,6 +700,9 @@ func main() {
 }
 
 ```
+
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_14.PNG)
 
 15. **Римские цифры**
     
@@ -737,4 +777,6 @@ func main() {
 
 ```
 
+**Результат** 
+![alt-text](https://github.com/mik0war/SoftDevTech/tree/go_pr5/images/5_15.PNG)
       
