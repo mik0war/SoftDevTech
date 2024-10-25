@@ -55,6 +55,10 @@ func main() {
 }
 ```
 
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_1.PNG)
+
 ### Задание 1.2.
 Напишите программу, которая преобразует температуру из градусов Цельсия в Фаренгейты и обратно. 
 ```go
@@ -90,6 +94,11 @@ func main() {
 }
 ```
 
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_2.PNG)
+
+
 ### Задание 1.3.
 Напишите программу, которая принимает массив чисел и возвращает новый массив, где каждое число удвоено.
 ```go
@@ -116,6 +125,12 @@ func main() {
 
 ```
 
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_3.PNG)
+
+
 ### Задание 1.4.
 Напишите программу, которая принимает несколько строк и объединяет их в одну строку через пробел.
 ```go
@@ -140,6 +155,11 @@ func main() {
 }
 
 ```
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_4.PNG)
+
 
 ### Задание 1.5.
 Напишите программу, которая вычисляет расстояние между двумя точками в 2D пространстве.
@@ -167,6 +187,11 @@ func main() {
 	fmt.Println(getDistance(x1, y1, x2, y2))
 }
 ```
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_5.PNG)
+
 
 ## 2. Задачи с условным оператором
 
@@ -196,6 +221,11 @@ func main() {
 }
 ```
 
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_6.PNG)
+
+
 ### Задание 2.2.
 Напишите программу, которая проверяет, является ли введенный год високосным.
 ```go
@@ -221,6 +251,11 @@ func main() {
 	}
 }
 ```
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_7.PNG)
+
 
 ### Задание 2.3.
 Напишите программу, которая принимает три числа и выводит наибольшее из них.
@@ -256,6 +291,11 @@ func main() {
 	fmt.Println(maxNum)
 }
 ```
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_8.PNG)
+
 
 ### Задание 2.4.
 Напишите программу, которая принимает возраст человека и выводит, к какой возрастной группе он относится (ребенок, подросток, взрослый, пожилой. В комментариях указать возрастные рамки).
@@ -296,6 +336,11 @@ func main() {
 }
 ```
 
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_9.PNG)
+
+
 ### Задание 2.5.
 Напишите программу, которая проверяет, делится ли число одновременно на 3 и 5.
 ```go
@@ -322,6 +367,11 @@ func main() {
 }
 ```
 
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_10.PNG)
+
+
 ## 3. Задачи на циклы
 ### Задание 3.1.
 Напишите программу, которая вычисляет факториал числа.
@@ -345,6 +395,11 @@ func main() {
 	fmt.Println(factorial(number))
 }
 ```
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_11.PNG)
+
 
 ### Задание 3.2.
 Напишите программу, которая выводит первые "n" чисел Фибоначчи.
@@ -373,6 +428,11 @@ func main() {
 	}
 }
 ```
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_12.PNG)
+
 
 ### Задание 3.3.
 Напишите программу, которая переворачивает массив чисел.
@@ -410,6 +470,11 @@ func main() {
 }
 ```
 
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_13.PNG)
+
+
 ### Задание 3.4.
 Напишите программу, которая выводит все простые числа до заданного числа.
 ```go
@@ -442,6 +507,11 @@ func main() {
 }
 
 ```
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_14.PNG)
+
 
 ### Задание 3.5.
 Напишите программу, которая вычисляет сумму всех чисел в массиве.
@@ -477,3 +547,9 @@ func main() {
 }
 
 ```
+
+
+**Результат**
+
+![alt-text](https://github.com/mik0war/SoftDevTech/blob/go_pr4/images/4_15.PNG)
+
