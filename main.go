@@ -6,7 +6,9 @@ import (
 	"net/http"
 )
 
-//func getProducts()
+func getProducts() {
+
+}
 
 func main() {
 	// Создаем новый роутер Gin
