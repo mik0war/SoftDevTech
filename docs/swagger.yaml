@@ -1,0 +1,169 @@
+definitions:
+  types.Category:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  types.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  types.Product:
+    properties:
+      category:
+        $ref: '#/definitions/types.Category'
+      description:
+        type: string
+      id:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+    type: object
+  types.SuccessResponse:
+    properties:
+      message:
+        example: ok
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample online-shop server
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Online shop API Swagger
+  version: "1.0"
+paths:
+  /products:
+    get:
+      description: Возвращает список всех товаров
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Product'
+            type: array
+      summary: Получить все товары
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новый товар в список
+      parameters:
+      - description: Информация о товаре
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/types.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Создать новый товар
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      description: Удаляет товар по ID
+      parameters:
+      - description: ID товара
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Product'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Удалить товар
+      tags:
+      - products
+    get:
+      description: Возвращает информацию о товаре по его ID
+      parameters:
+      - description: ID товара
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Product'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Получить товар по ID
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные товара по ID
+      parameters:
+      - description: ID товара
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Новые данные товара
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/types.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Обновить существующий товар
+      tags:
+      - products
+swagger: "2.0"
