@@ -1,11 +1,12 @@
-package main
+package data
 
 import (
 	"errors"
 	"online-shop-API/types"
+	"online-shop-API/utils"
 )
 
-var products = []types.Product{
+var Products = []types.Product{
 	{
 		ID:          "1",
 		Name:        `16" Ноутбук Infinix InBook Y3H MAX YL613H серебристый`,
@@ -39,42 +40,42 @@ var products = []types.Product{
 	},
 }
 
-func getProductsData(limit int, offset int, categoryId string) []types.Product {
-	return filter(products[offset:limit+offset], func(product types.Product) bool {
+func GetProductsData(limit int, offset int, categoryId string) []types.Product {
+	return utils.Filter(Products[offset:limit+offset], func(product types.Product) bool {
 		return categoryId == "all" || product.Category.ID == categoryId
 	})
 }
 
-func getDataLength() int {
-	return len(products)
+func GetDataLength() int {
+	return len(Products)
 }
 
-func createNewProduct(product types.Product) types.Product {
-	products = append(products, product)
+func CreateNewProduct(product types.Product) types.Product {
+	Products = append(Products, product)
 
-	return products[len(products)-1]
+	return Products[len(Products)-1]
 }
 
-func updateProductData(id string, product types.Product) (int, error) {
-	for index, product := range products {
+func UpdateProductData(id string, product types.Product) (int, error) {
+	for index, product := range Products {
 		if product.ID == id {
-			products[index] = product
+			Products[index] = product
 			return index, nil
 		}
 	}
-	products = append(products, product)
+	Products = append(Products, product)
 
-	return len(products), errors.New("Product not found")
+	return len(Products), errors.New("product not found")
 }
 
-func deleteProductData(id string) (int, error) {
+func DeleteProductData(id string) (int, error) {
 
-	for index, product := range products {
+	for index, product := range Products {
 		if product.ID == id {
-			products = append(products[:index], products[index+1:]...)
+			Products = append(Products[:index], Products[index+1:]...)
 			return index, nil
 		}
 	}
 
-	return 0, errors.New("Product not found")
+	return 0, errors.New("product not found")
 }

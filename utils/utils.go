@@ -1,8 +1,8 @@
-package main
+package utils
 
 import "strconv"
 
-func filter[T any](ss []T, test func(T) bool) (ret []T) {
+func Filter[T any](ss []T, test func(T) bool) (ret []T) {
 	for _, s := range ss {
 		if test(s) {
 			ret = append(ret, s)
@@ -11,7 +11,7 @@ func filter[T any](ss []T, test func(T) bool) (ret []T) {
 	return
 }
 
-func getQueryParam[T any](
+func GetQueryParam[T any](
 	paramsMap map[string][]string,
 	paramName string,
 	insteadValue T,
@@ -25,7 +25,7 @@ func getQueryParam[T any](
 	return converterFunc(paramFromQuery, insteadValue, conditionToChooseInsteadValue)
 }
 
-func getInt(param []string, insteadValue int, conditionToChooseInsteadValue func(int, int) bool) int {
+func GetInt(param []string, insteadValue int, conditionToChooseInsteadValue func(int, int) bool) int {
 	value, err := strconv.Atoi(param[0])
 	if err != nil || conditionToChooseInsteadValue(value, insteadValue) {
 		return insteadValue
@@ -33,7 +33,7 @@ func getInt(param []string, insteadValue int, conditionToChooseInsteadValue func
 	return value
 }
 
-func getString(
+func GetString(
 	param []string,
 	insteadValue string,
 	conditionToChooseInsteadValue func(string, string) bool,

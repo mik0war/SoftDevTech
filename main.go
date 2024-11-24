@@ -4,137 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"net/http"
 	_ "online-shop-API/docs"
 	"online-shop-API/types"
 )
-
-// @Summary Получить все товары
-// @Description Возвращает список всех товаров
-// @Tags products
-// @Produce json
-// @Success 200 {array} types.Product
-// @Router /products [get]
-func getProducts(c *gin.Context) {
-	params := c.Request.URL.Query()
-
-	limit := getQueryParam(params,
-		"limit",
-		getDataLength(),
-		func(value int, insteadValue int) bool {
-			return value < 0 || value > insteadValue
-		},
-		getInt,
-	)
-
-	offset := getQueryParam(params,
-		"offset",
-		0,
-		func(value int, insteadValue int) bool {
-			return value < insteadValue
-		},
-		getInt)
-
-	categoryId := getQueryParam(params,
-		"category_id",
-		"all",
-		func(value string, insteadValue string) bool {
-			return value == ""
-		},
-		getString)
-
-	returnedProducts := getProductsData(limit, offset, categoryId)
-
-	c.JSON(http.StatusOK, returnedProducts)
-}
-
-// @Summary Получить товар по ID
-// @Description Возвращает информацию о товаре по его ID
-// @Tags products
-// @Produce json
-// @Param id path string true "ID товара"
-// @Success 200 {object} types.Product
-// @Failure 404 {object} types.ErrorResponse
-// @Router /products/{id} [get]
-func getProduct(c *gin.Context) {
-	id := c.Param("id")
-	for _, product := range products {
-		if product.ID == id {
-			c.JSON(http.StatusOK, product)
-			return
-		}
-	}
-
-	c.JSON(http.StatusNotFound, types.ErrorResponse{Error: "Product not found"})
-}
-
-// @Summary Создать новый товар
-// @Description Добавляет новый товар в список
-// @Tags products
-// @Accept json
-// @Produce json
-// @Param product body types.Product true "Информация о товаре"
-// @Success 201 {object} types.Product
-// @Failure 400 {object} types.ErrorResponse
-// @Router /products [post]
-func createProduct(c *gin.Context) {
-	var product types.Product
-	if err := c.BindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "invalid request"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, createNewProduct(product))
-}
-
-// @Summary Удалить товар
-// @Description Удаляет товар по ID
-// @Tags products
-// @Produce json
-// @Param id path string true "ID товара"
-// @Success 200 {object} types.Product
-// @Failure 404 {object} types.ErrorResponse
-// @Router /products/{id} [delete]
-func deleteProduct(c *gin.Context) {
-	id := c.Param("id")
-
-	_, err := deleteProductData(id)
-
-	if err != nil {
-		c.JSON(http.StatusNotFound, types.ErrorResponse{Error: err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, types.SuccessResponse{Message: "ok"})
-}
-
-// @Summary Обновить существующий товар
-// @Description Обновляет данные товара по ID
-// @Tags products
-// @Accept json
-// @Produce json
-// @Param id path string true "ID товара"
-// @Param product body types.Product true "Новые данные товара"
-// @Success 201 {object} types.SuccessResponse
-// @Success 202 {object} types.SuccessResponse
-// @Failure 404 {object} types.ErrorResponse
-// @Router /products/{id} [put]
-func updateProduct(c *gin.Context) {
-	id := c.Param("id")
-	var product types.Product
-	if err := c.BindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "invalid request"})
-		return
-	}
-
-	index, err := updateProductData(id, product)
-
-	if err != nil {
-		c.JSON(http.StatusCreated,
-			types.ErrorResponse{Error: err.Error() + "new one " + string(rune(index))})
-	}
-	c.JSON(http.StatusAccepted, types.SuccessResponse{Message: string(rune(index))})
-}
 
 // @title           Online shop API Swagger
 // @version         1.0
@@ -156,12 +28,26 @@ func main() {
 	// Создаем новый роутер Gin
 	router := gin.Default()
 
-	// Определяем маршруты для продуктов
-	router.GET("/products", getProducts)
-	router.GET("/products/:id", getProduct)
-	router.POST("/products/", createProduct)
-	router.DELETE("/products/:id", deleteProduct)
-	router.PUT("/products/:id", updateProduct)
+	router.POST("/login", login)
+	router.POST("/refresh", refresh)
+	router.POST("/registration", registration)
+
+	adminGroup := router.Group("/")
+	adminRole := types.Role{Name: "admin"}
+	adminGroup.Use(authMiddleware(adminRole))
+	{
+		adminGroup.POST("/products/", createProduct)
+		adminGroup.DELETE("/products/:id", deleteProduct)
+		adminGroup.PUT("/products/:id", updateProduct)
+	}
+
+	userGroup := router.Group("/")
+	userRole := types.Role{Name: "user"}
+	userGroup.Use(authMiddleware(userRole))
+	{
+		userGroup.GET("/products", getProducts)
+		userGroup.GET("/products/:id", getProduct)
+	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
