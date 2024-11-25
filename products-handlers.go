@@ -12,7 +12,12 @@ import (
 // @Description Возвращает список всех товаров
 // @Tags products
 // @Produce json
+// @Param limit query int false "Максимальное количество товаров"
+// @Param offset query int false "Сдвиг"
+// @Param category_id query int false "Id категории"
+// @Param Authorization header string true "Access token"
 // @Success 200 {array} types.Product
+// @Failure 401 {object} types.ErrorResponse
 // @Router /products [get]
 func getProducts(c *gin.Context) {
 	params := c.Request.URL.Query()
@@ -52,8 +57,10 @@ func getProducts(c *gin.Context) {
 // @Tags products
 // @Produce json
 // @Param id path string true "ID товара"
+// @Param Authorization header string true "Access token"
 // @Success 200 {object} types.Product
 // @Failure 404 {object} types.ErrorResponse
+// @Failure 401 {object} types.ErrorResponse
 // @Router /products/{id} [get]
 func getProduct(c *gin.Context) {
 	id := c.Param("id")
@@ -73,8 +80,10 @@ func getProduct(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param product body types.Product true "Информация о товаре"
+// @Param Authorization header string true "Access token"
 // @Success 201 {object} types.Product
 // @Failure 400 {object} types.ErrorResponse
+// @Failure 401 {object} types.ErrorResponse
 // @Router /products [post]
 func createProduct(c *gin.Context) {
 	var product types.Product
@@ -91,8 +100,10 @@ func createProduct(c *gin.Context) {
 // @Tags products
 // @Produce json
 // @Param id path string true "ID товара"
-// @Success 200 {object} types.Product
+// @Param Authorization header string true "Access token"
+// @Success 200 {object} types.SuccessResponse
 // @Failure 404 {object} types.ErrorResponse
+// @Failure 401 {object} types.ErrorResponse
 // @Router /products/{id} [delete]
 func deleteProduct(c *gin.Context) {
 	id := c.Param("id")
@@ -114,9 +125,11 @@ func deleteProduct(c *gin.Context) {
 // @Produce json
 // @Param id path string true "ID товара"
 // @Param product body types.Product true "Новые данные товара"
+// @Param Authorization header string true "Access token"
 // @Success 201 {object} types.SuccessResponse
 // @Success 202 {object} types.SuccessResponse
 // @Failure 404 {object} types.ErrorResponse
+// @Failure 401 {object} types.ErrorResponse
 // @Router /products/{id} [put]
 func updateProduct(c *gin.Context) {
 	id := c.Param("id")

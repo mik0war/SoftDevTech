@@ -13,7 +13,11 @@ func (u User) Equal(other User) bool {
 }
 
 type Role struct {
-	Name string `json:"name"`
+	Name string `json:"name" example:"Admin"`
+}
+type UserAuthData struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type Credentials struct {

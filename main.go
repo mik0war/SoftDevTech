@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -28,9 +29,17 @@ func main() {
 	// Создаем новый роутер Gin
 	router := gin.Default()
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://127.0.0.1:8080", "http://localhost:8080"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Authorization", "Content-Type", "Accept", "Origin"},
+		ExposeHeaders:    []string{"Content-Length", "Authorization"},
+		AllowCredentials: true,
+	}))
+
 	router.POST("/login", login)
 	router.POST("/refresh", refresh)
-	router.POST("/registration", registration)
+	router.POST("/register", registration)
 
 	adminGroup := router.Group("/")
 	adminRole := types.Role{Name: "admin"}

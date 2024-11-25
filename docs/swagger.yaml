@@ -11,6 +11,13 @@ definitions:
       error:
         type: string
     type: object
+  types.JwtResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
   types.Product:
     properties:
       category:
@@ -30,6 +37,13 @@ definitions:
         example: ok
         type: string
     type: object
+  types.UserAuthData:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -47,9 +61,61 @@ info:
   title: Online shop API Swagger
   version: "1.0"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return access and refresh tokens
+      parameters:
+      - description: User credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserAuthData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tokens generated successfully
+          schema:
+            $ref: '#/definitions/types.JwtResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Login user
+      tags:
+      - Auth
   /products:
     get:
       description: Возвращает список всех товаров
+      parameters:
+      - description: Максимальное количество товаров
+        in: query
+        name: limit
+        type: integer
+      - description: Сдвиг
+        in: query
+        name: offset
+        type: integer
+      - description: Id категории
+        in: query
+        name: category_id
+        type: integer
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -59,6 +125,10 @@ paths:
             items:
               $ref: '#/definitions/types.Product'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
       summary: Получить все товары
       tags:
       - products
@@ -73,6 +143,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/types.Product'
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -82,6 +157,10 @@ paths:
             $ref: '#/definitions/types.Product'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/types.ErrorResponse'
       summary: Создать новый товар
@@ -96,13 +175,22 @@ paths:
         name: id
         required: true
         type: string
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Product'
+            $ref: '#/definitions/types.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -118,6 +206,11 @@ paths:
         name: id
         required: true
         type: string
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -125,6 +218,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/types.Product'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -148,6 +245,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/types.Product'
+      - description: Access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -159,6 +261,10 @@ paths:
           description: Accepted
           schema:
             $ref: '#/definitions/types.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
         "404":
           description: Not Found
           schema:
@@ -166,4 +272,59 @@ paths:
       summary: Обновить существующий товар
       tags:
       - products
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh the access token using a valid refresh token
+      parameters:
+      - description: Refresh_token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token refreshed successfully
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "401":
+          description: Token expired or unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Refresh token
+      tags:
+      - Auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with "user" role
+      parameters:
+      - description: User credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserAuthData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Invalid request or user already exists
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - Auth
 swagger: "2.0"
