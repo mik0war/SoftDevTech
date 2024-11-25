@@ -64,7 +64,7 @@ func updateProductData(id string, product types.Product) (int, error) {
 	}
 	products = append(products, product)
 
-	return len(products), errors.New("Product not found")
+	return len(products), errors.New("product not found")
 }
 
 func deleteProductData(id string) (int, error) {

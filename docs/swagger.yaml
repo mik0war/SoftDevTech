@@ -33,23 +33,28 @@ definitions:
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: localhost:8080
+host: 127.0.0.1:8080
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
+  contact: {}
   description: This is a sample online-shop server
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
   title: Online shop API Swagger
   version: "1.0"
 paths:
   /products:
     get:
       description: Возвращает список всех товаров
+      parameters:
+      - description: Максимальное количество товаров
+        in: query
+        name: limit
+        type: integer
+      - description: Сдвиг
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -102,7 +107,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Product'
+            $ref: '#/definitions/types.SuccessResponse'
         "404":
           description: Not Found
           schema:

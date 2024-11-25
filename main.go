@@ -1,18 +1,22 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	_ "online-shop-API/docs"
 	"online-shop-API/types"
+	"strconv"
 )
 
 // @Summary Получить все товары
 // @Description Возвращает список всех товаров
 // @Tags products
 // @Produce json
+// @Param limit query int false "Максимальное количество товаров"
+// @Param offset query int false "Сдвиг"
 // @Success 200 {array} types.Product
 // @Router /products [get]
 func getProducts(c *gin.Context) {
@@ -92,7 +96,7 @@ func createProduct(c *gin.Context) {
 // @Tags products
 // @Produce json
 // @Param id path string true "ID товара"
-// @Success 200 {object} types.Product
+// @Success 200 {object} types.SuccessResponse
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [delete]
 func deleteProduct(c *gin.Context) {
@@ -131,30 +135,28 @@ func updateProduct(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusCreated,
-			types.ErrorResponse{Error: err.Error() + "new one " + string(rune(index))})
+			types.SuccessResponse{Message: err.Error() + ", new one " + strconv.Itoa(index)})
+	} else {
+		c.JSON(http.StatusAccepted, types.SuccessResponse{Message: strconv.Itoa(index)})
 	}
-	c.JSON(http.StatusAccepted, types.SuccessResponse{Message: string(rune(index))})
 }
 
 // @title           Online shop API Swagger
 // @version         1.0
 // @description     This is a sample online-shop server
-// @termsOfService  http://swagger.io/terms/
-
-// @contact.name   API Support
-// @contact.url    http://www.swagger.io/support
-// @contact.email  support@swagger.io
 
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
+// @host      127.0.0.1:8080
 
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	// Создаем новый роутер Gin
 	router := gin.Default()
+
+	router.Use(cors.Default())
 
 	// Определяем маршруты для продуктов
 	router.GET("/products", getProducts)
