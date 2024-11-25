@@ -50,179 +50,180 @@
 SELECT * FROM "Role";
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/1.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/1.PNG)
+
 **Таблица User**
 ```sql
 SELECT * FROM "User";
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/2.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/2.PNG)
 
 **Таблица AuthorizedClient**
 ```sql
 SELECT * FROM AuthorizedClient;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/3.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/3.PNG)
 
 **Таблица ClientAddress**
 ```sql
 SELECT * FROM ClientAddress;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/4.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/4.PNG)
 
 **Таблица Manufacturer**
 ```sql
 SELECT * FROM Manufacturer;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/5.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/5.PNG)
 
 **Таблица Product**
 ```sql
 SELECT * FROM Product;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/6.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/6.PNG)
 
 **Таблица Category**
 ```sql
 SELECT * FROM Category;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/7.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/7.PNG)
 
 **Таблица ProductCategory**
 ```sql
 SELECT * FROM ProductCategory;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/8.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/8.PNG)
 
 **Таблица Characteristic**
 ```sql
 SELECT * FROM Characteristic;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/9.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/9.PNG)
 
 **Таблица ProductCharacteristic**
 ```sql
 SELECT * FROM ProductCharacteristic;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/10.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/10.PNG)
 
 **Таблица ProductCost**
 ```sql
 SELECT * FROM ProductCost;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images//11.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images//11.PNG)
 
 **Таблица Review**
 ```sql
 SELECT * FROM Review;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/12.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/12.PNG)
 
 **Таблица Comment**
 ```sql
 SELECT * FROM "Comment";
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/13.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/13.PNG)
 
 **Таблица Attachment**
 ```sql
 SELECT * FROM Attachment;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/14.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/14.PNG)
 
 **Таблица Favorites**
 ```sql
 SELECT * FROM Favorites;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/15.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/15.PNG)
 
 **Таблица ShoppingCart**
 ```sql
 SELECT * FROM ShoppingCart;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/16.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/16.PNG)
 
 **Таблица ShoppingCartProduct**
 ```sql
 SELECT * FROM ShoppingCartProduct;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/17.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/17.PNG)
 
 **Таблица Order**
 ```sql
 SELECT * FROM "Order";
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/18.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/18.PNG)
 
 **Таблица OrderStep**
 ```sql
 SELECT * FROM OrderStep;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/19.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/19.PNG)
 
 **Таблица Employee**
 ```sql
 SELECT * FROM Employee;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/20.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/20.PNG)
 
 **Таблица Warehouse**
 ```sql
 SELECT * FROM Warehouse;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/21.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/21.PNG)
 
 **Таблица ProductInOrder**
 ```sql
 SELECT * FROM ProductInOrder;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/22.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/22.PNG)
 
 **Таблица WarehouseProduct**
 ```sql
 SELECT * FROM WarehouseProduct;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/23.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/23.PNG)
 
 **Таблица Supplier**
 ```sql
 SELECT * FROM Supplier;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/24.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/24.PNG)
 
 **Таблица Supply**
 ```sql
 SELECT * FROM Supply;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/25.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/25.PNG)
 
 **Таблица SuppliedProduct**
 ```sql
 SELECT * FROM SuppliedProduct;
 ```
 
-![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/26.png)
+![alt text](https://github.com/mik0war/SoftDevTech/blob/online_shop_db/images/26.PNG)
 
