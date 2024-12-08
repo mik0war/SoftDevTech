@@ -6,7 +6,12 @@ import (
 	"online-shop-API/data"
 	"online-shop-API/types"
 	"online-shop-API/utils"
+	"strconv"
 )
+
+type ProductHandler struct {
+	productRepo data.ProductRepository
+}
 
 // @Summary Получить все товары
 // @Description Возвращает список всех товаров
@@ -14,12 +19,12 @@ import (
 // @Produce json
 // @Success 200 {array} types.Product
 // @Router /products [get]
-func getProducts(c *gin.Context) {
+func (handler *ProductHandler) getProducts(c *gin.Context) {
 	params := c.Request.URL.Query()
 
 	limit := utils.GetQueryParam(params,
 		"limit",
-		data.GetDataLength(),
+		10,
 		func(value int, insteadValue int) bool {
 			return value < 0 || value > insteadValue
 		},
@@ -34,7 +39,7 @@ func getProducts(c *gin.Context) {
 		},
 		utils.GetInt)
 
-	categoryId := utils.GetQueryParam(params,
+	_ = utils.GetQueryParam(params,
 		"category_id",
 		"all",
 		func(value string, insteadValue string) bool {
@@ -42,7 +47,9 @@ func getProducts(c *gin.Context) {
 		},
 		utils.GetString)
 
-	returnedProducts := data.GetProductsData(limit, offset, categoryId)
+	filters := map[string]interface{}{}
+
+	returnedProducts, _, _ := handler.productRepo.GetProducts(filters, limit, offset)
 
 	c.JSON(http.StatusOK, returnedProducts)
 }
@@ -55,13 +62,16 @@ func getProducts(c *gin.Context) {
 // @Success 200 {object} types.Product
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [get]
-func getProduct(c *gin.Context) {
+func (handler *ProductHandler) getProduct(c *gin.Context) {
 	id := c.Param("id")
-	for _, product := range data.Products {
-		if product.ID == id {
-			c.JSON(http.StatusOK, product)
-			return
-		}
+	filters := map[string]interface{}{
+		"status":    "available",
+		"ProductId": id,
+	}
+	product, totalSize, err := handler.productRepo.GetProducts(filters, 1, 1)
+
+	if err == nil && totalSize > 0 {
+		c.JSON(http.StatusOK, product)
 	}
 
 	c.JSON(http.StatusNotFound, types.ErrorResponse{Error: "Product not found"})
@@ -76,14 +86,19 @@ func getProduct(c *gin.Context) {
 // @Success 201 {object} types.Product
 // @Failure 400 {object} types.ErrorResponse
 // @Router /products [post]
-func createProduct(c *gin.Context) {
+func (handler *ProductHandler) createProduct(c *gin.Context) {
 	var product types.Product
 	if err := c.BindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "invalid request"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, data.CreateNewProduct(product))
+	answer, err := handler.productRepo.AddProduct(&product)
+
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, types.ErrorResponse{Error: err.Error()})
+	}
+	c.JSON(http.StatusCreated, answer)
 }
 
 // @Summary Удалить товар
@@ -94,10 +109,10 @@ func createProduct(c *gin.Context) {
 // @Success 200 {object} types.Product
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [delete]
-func deleteProduct(c *gin.Context) {
-	id := c.Param("id")
+func (handler *ProductHandler) deleteProduct(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 
-	_, err := data.DeleteProductData(id)
+	err := handler.productRepo.DeleteProduct(uint(id))
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, types.ErrorResponse{Error: err.Error()})
@@ -118,19 +133,19 @@ func deleteProduct(c *gin.Context) {
 // @Success 202 {object} types.SuccessResponse
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [put]
-func updateProduct(c *gin.Context) {
-	id := c.Param("id")
+func (handler *ProductHandler) updateProduct(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
 	var product types.Product
 	if err := c.BindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "invalid request"})
 		return
 	}
 
-	index, err := data.UpdateProductData(id, product)
+	newProduct, err := handler.productRepo.UpdateProduct(uint(id), &product)
 
 	if err != nil {
 		c.JSON(http.StatusCreated,
-			types.ErrorResponse{Error: err.Error() + "new one " + string(rune(index))})
+			types.ErrorResponse{Error: err.Error() + "new one"})
 	}
-	c.JSON(http.StatusAccepted, types.SuccessResponse{Message: string(rune(index))})
+	c.JSON(http.StatusAccepted, newProduct)
 }
