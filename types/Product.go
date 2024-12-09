@@ -10,7 +10,7 @@ type Product struct {
 	ManufacturerID uint   `gorm:"not null" json:"manufacturerID"`     // Foreign key to Manufacturer
 
 	// Associations
-	Manufacturer    Manufacturer     `gorm:"foreignKey:ManufacturerID"`         // Belongs to Manufacturer
-	Categories      []Category       `gorm:"many2many:product_categories"`      // Many-to-many with Category
-	Characteristics []Characteristic `gorm:"many2many:product_characteristics"` // Many-to-many with Characteristic
+	Manufacturer    Manufacturer     `gorm:"foreignKey:ManufacturerID;"`                                                               // Belongs to Manufacturer
+	Categories      []Category       `gorm:"many2many:product_category;joinForeignKey:ProductID;joinReferences:CategoryID"`            // Many-to-many with Category
+	Characteristics []Characteristic `gorm:"many2many:ProductCharacteristic;joinForeignKey:ProductID;joinReferences:CharacteristicID"` // Many-to-many with Characteristic
 }

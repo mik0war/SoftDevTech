@@ -3,6 +3,7 @@ package data
 import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"log"
 	"online-shop-API/types"
@@ -14,14 +15,14 @@ func InitDB() *gorm.DB {
 	dsn := "host=localhost " +
 		"user=postgres password=root dbname=online-shop port=5432 sslmode=disable"
 	var err error
-	Db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	Db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
-	}
-
-	// Отключаем использование множественного числа
-	Db.NamingStrategy = schema.NamingStrategy{
-		SingularTable: true,
 	}
 
 	// Миграция схемы
