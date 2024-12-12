@@ -4,28 +4,25 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"online-shop-API/internal/types"
+	_ "strconv"
 )
 
-// ProductRepository provides access to the product store.
-type ProductRepository struct {
-	db *gorm.DB
-}
-
-// NewProductRepository creates a new instance of ProductRepository.
-func NewProductRepository(db *gorm.DB) *ProductRepository {
-	return &ProductRepository{db: db}
+// NewProductRepository creates a new instance of Repository.
+func NewProductRepository(db *gorm.DB) *Repository {
+	return &Repository{db: db}
 }
 
 // GetProducts retrieves a list of products with optional filters and pagination.
-func (repo *ProductRepository) GetProducts(
+func (repo *Repository) GetProducts(
 	filters map[string]interface{},
 	page int,
 	pageSize int,
 ) ([]types.Product, int64, error) {
 
-	repo.db = repo.db.Debug()
+	repo.db = repo.db.Session(&gorm.Session{NewDB: true}).Debug()
+	repo.db = repo.db.Set("gorm:auto_preload", true)
 	var products []types.Product
-	var totalCount int64
+	var totalCount int64 = 0
 
 	// Initialize the productsQuery
 	productsQuery := repo.db.Model(&types.Product{})
@@ -36,55 +33,48 @@ func (repo *ProductRepository) GetProducts(
 	}
 
 	// Count total products for pagination
-	if err := productsQuery.Count(&totalCount).Error; err != nil {
+	if err := productsQuery.
+		Joins("JOIN product_category ON product.product_id = product_category.product_id").
+		Joins("JOIN category ON product_category.category_id = category.category_id").
+		Count(&totalCount).Error; err != nil {
 		return nil, 0, err
 	}
 
 	// Apply pagination
 	offset := (page - 1) * pageSize
 	// Сначала получаем список продуктов
-	if err := productsQuery.Limit(pageSize).Offset(offset).Find(&products).Error; err != nil {
+	if err := productsQuery.
+		Preload("Manufacturer").
+		Preload("Category.Category").
+		Preload("Characteristic.Characteristic").
+		Limit(pageSize).
+		Offset(offset).
+		Find(&products).Error; err != nil {
 		return nil, 0, err
-	}
-
-	// Затем загружаем ассоциации для каждого продукта
-	for i := range products {
-		manufacturerQuery := repo.db.Model(&types.Manufacturer{})
-		if err := manufacturerQuery.First(&products[i].Manufacturer, products[i].ManufacturerID).Error; err != nil {
-			return nil, 0, err
-		}
-		categoryQuery := repo.db.Model(&types.Category{})
-		if err := categoryQuery.Select("category.*").
-			Joins("JOIN product_category ON product_category.category_id = category.category_id").
-			Joins("JOIN product ON product.product_id = product_category.product_id").
-			Find(&products[i].Category, products[i].ProductID).Error; err != nil {
-			return nil, 0, err
-		}
-		characteristicQuery := repo.db.Model(&types.Characteristic{})
-		if err := characteristicQuery.Select("characteristic.*, product_characteristic.value").
-			Joins("JOIN product_characteristic ON "+
-				"product_characteristic.characteristic_id = characteristic.characteristic_id").
-			Joins("JOIN product ON product.product_id = product_characteristic.product_id").
-			Find(&products[i].Characteristic, products[i].ProductID).Error; err != nil {
-			return nil, 0, err
-		}
 	}
 
 	return products, totalCount, nil
 }
 
 // AddProduct добавляет новый продукт в базу данных.
-func (repo *ProductRepository) AddProduct(product *types.Product) (*types.Product, error) {
+func (repo *Repository) AddProduct(product *types.Product) (*types.Product, error) {
 	// Проверка на обязательные поля
 	if product.Name == "" {
 		return nil, errors.New("product name is required")
 	}
-	if product.ManufacturerID == 0 {
-		return nil, errors.New("manufacturer ID is required")
+
+	//Если статус не установлен, устанавливается в активный
+	if product.Status == "" {
+		product.Status = "ACTIVE"
 	}
 
 	// Сохраняем продукт в базе
 	if err := repo.db.Create(product).Error; err != nil {
+		return nil, err
+	}
+
+	err := repo.SubscribeProduct(product.ProductID, 0)
+	if err != nil {
 		return nil, err
 	}
 
@@ -93,7 +83,7 @@ func (repo *ProductRepository) AddProduct(product *types.Product) (*types.Produc
 }
 
 // UpdateProduct обновляет существующий продукт в базе данных.
-func (repo *ProductRepository) UpdateProduct(
+func (repo *Repository) UpdateProduct(
 	productID uint,
 	updatedData *types.Product,
 ) (*types.Product, error) {
@@ -123,6 +113,14 @@ func (repo *ProductRepository) UpdateProduct(
 		product.ManufacturerID = updatedData.ManufacturerID
 	}
 
+	if updatedData.Category != nil {
+		product.Category = updatedData.Category
+	}
+
+	if updatedData.Characteristic != nil {
+		product.Characteristic = updatedData.Characteristic
+	}
+
 	// Сохраняем изменения
 	if err := repo.db.Save(&product).Error; err != nil {
 		return nil, err
@@ -133,7 +131,7 @@ func (repo *ProductRepository) UpdateProduct(
 }
 
 // DeleteProduct удаляет продукт из базы данных по его ID.
-func (repo *ProductRepository) DeleteProduct(productID uint) error {
+func (repo *Repository) DeleteProduct(productID uint) error {
 	// Проверяем, существует ли продукт
 	var product types.Product
 	if err := repo.db.First(&product, productID).Error; err != nil {

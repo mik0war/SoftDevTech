@@ -19,6 +19,7 @@ func InitDB() *gorm.DB {
 		Logger: logger.Default.LogMode(logger.Info),
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
+			NameReplacer:  nil,
 		},
 	})
 	if err != nil {
@@ -34,10 +35,23 @@ func InitDB() *gorm.DB {
 	if err != nil {
 		return nil
 	}
+	err = Db.AutoMigrate(&types.Characteristic{})
+	if err != nil {
+		return nil
+	}
 	err = Db.AutoMigrate(&types.User{})
+	if err != nil {
+		return nil
+	}
+	err = Db.AutoMigrate(&types.ProductCategory{})
 	if err != nil {
 		return nil
 	}
 
 	return Db
+}
+
+// Repository provides access to the product store.
+type Repository struct {
+	db *gorm.DB
 }

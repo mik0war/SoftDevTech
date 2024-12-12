@@ -10,7 +10,7 @@ import (
 )
 
 type ProductHandler struct {
-	productRepo data.ProductRepository
+	productRepo data.Repository
 }
 
 // @Summary Получить все товары
@@ -26,7 +26,7 @@ func (handler *ProductHandler) getProducts(c *gin.Context) {
 		"page",
 		1,
 		func(value int, insteadValue int) bool {
-			return value < 0 || value > insteadValue
+			return value < insteadValue
 		},
 		utils.GetInt,
 	)
@@ -35,23 +35,28 @@ func (handler *ProductHandler) getProducts(c *gin.Context) {
 		"pageSize",
 		100,
 		func(value int, insteadValue int) bool {
-			return value < insteadValue
+			return value < 0 || value > insteadValue
 		},
 		utils.GetInt)
 
-	_ = utils.GetQueryParam(params,
-		"category_id",
-		"all",
+	category := utils.GetQueryParam(params,
+		"category",
+		"ALL",
 		func(value string, insteadValue string) bool {
 			return value == ""
 		},
 		utils.GetString)
 
-	filters := map[string]interface{}{}
+	filters := map[string]interface{}{
+		"category.name": category,
+	}
 
-	returnedProducts, _, _ := handler.productRepo.GetProducts(filters, page, pageSize)
-
-	c.JSON(http.StatusOK, returnedProducts)
+	returnedProducts, _, err := handler.productRepo.GetProducts(filters, page, pageSize)
+	if err == nil {
+		c.JSON(http.StatusOK, returnedProducts)
+	} else {
+		c.JSON(http.StatusInternalServerError, err)
+	}
 }
 
 // @Summary Получить товар по ID

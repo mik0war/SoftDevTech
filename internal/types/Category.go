@@ -6,3 +6,10 @@ type Category struct {
 	Name        string `gorm:"not null"`   // Category name
 	Description string `gorm:"type:text"`  // Description of the category
 }
+
+type ProductCategory struct {
+	ProductID  uint `gorm:"primaryKey" json:"-"`
+	CategoryID uint `gorm:"primaryKey" json:"-"`
+
+	Category Category `gorm:"foreignKey:CategoryID;references:CategoryID" json:"category"`
+}
