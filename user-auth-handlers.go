@@ -4,8 +4,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"online-shop-API/data"
-	"online-shop-API/types"
+	"online-shop-API/internal/data"
+	"online-shop-API/internal/types"
 	"slices"
 	"time"
 )
@@ -71,7 +71,7 @@ func login(c *gin.Context) {
 	refreshToken, err := generateToken(
 		credentials.Username,
 		credentials.Roles,
-		time.Now().Add(15*time.Minute),
+		time.Now().Add(15*time.Hour),
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, types.ErrorResponse{Error: "could not create token"})

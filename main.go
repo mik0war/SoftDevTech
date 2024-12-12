@@ -4,9 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"online-shop-API/data"
 	_ "online-shop-API/docs"
-	"online-shop-API/types"
+	"online-shop-API/internal/data"
+	"online-shop-API/internal/types"
 )
 
 // @title           Online shop API Swagger

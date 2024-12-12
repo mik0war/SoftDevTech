@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"log"
-	"online-shop-API/types"
+	"online-shop-API/internal/types"
 )
 
 var Db *gorm.DB

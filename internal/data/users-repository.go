@@ -2,7 +2,7 @@ package data
 
 import (
 	"errors"
-	"online-shop-API/types"
+	"online-shop-API/internal/types"
 )
 
 var users = map[string]types.User{

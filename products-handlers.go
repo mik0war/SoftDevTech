@@ -3,9 +3,9 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"online-shop-API/data"
-	"online-shop-API/types"
-	"online-shop-API/utils"
+	"online-shop-API/internal/data"
+	"online-shop-API/internal/types"
+	"online-shop-API/internal/utils"
 	"strconv"
 )
 
@@ -22,18 +22,18 @@ type ProductHandler struct {
 func (handler *ProductHandler) getProducts(c *gin.Context) {
 	params := c.Request.URL.Query()
 
-	limit := utils.GetQueryParam(params,
-		"limit",
-		10,
+	page := utils.GetQueryParam(params,
+		"page",
+		1,
 		func(value int, insteadValue int) bool {
 			return value < 0 || value > insteadValue
 		},
 		utils.GetInt,
 	)
 
-	offset := utils.GetQueryParam(params,
-		"offset",
-		0,
+	pageSize := utils.GetQueryParam(params,
+		"pageSize",
+		100,
 		func(value int, insteadValue int) bool {
 			return value < insteadValue
 		},
@@ -49,7 +49,7 @@ func (handler *ProductHandler) getProducts(c *gin.Context) {
 
 	filters := map[string]interface{}{}
 
-	returnedProducts, _, _ := handler.productRepo.GetProducts(filters, limit, offset)
+	returnedProducts, _, _ := handler.productRepo.GetProducts(filters, page, pageSize)
 
 	c.JSON(http.StatusOK, returnedProducts)
 }
@@ -65,16 +65,15 @@ func (handler *ProductHandler) getProducts(c *gin.Context) {
 func (handler *ProductHandler) getProduct(c *gin.Context) {
 	id := c.Param("id")
 	filters := map[string]interface{}{
-		"status":    "available",
-		"ProductId": id,
+		"product.product_id": id,
 	}
 	product, totalSize, err := handler.productRepo.GetProducts(filters, 1, 1)
 
 	if err == nil && totalSize > 0 {
 		c.JSON(http.StatusOK, product)
+	} else {
+		c.JSON(http.StatusNotFound, types.ErrorResponse{Error: "Product not found"})
 	}
-
-	c.JSON(http.StatusNotFound, types.ErrorResponse{Error: "Product not found"})
 }
 
 // @Summary Создать новый товар

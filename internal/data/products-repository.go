@@ -3,7 +3,7 @@ package data
 import (
 	"errors"
 	"gorm.io/gorm"
-	"online-shop-API/types"
+	"online-shop-API/internal/types"
 )
 
 // ProductRepository provides access to the product store.
@@ -23,27 +23,51 @@ func (repo *ProductRepository) GetProducts(
 	pageSize int,
 ) ([]types.Product, int64, error) {
 
+	repo.db = repo.db.Debug()
 	var products []types.Product
 	var totalCount int64
 
-	// Initialize the query
-	query := repo.db.Model(&types.Product{})
+	// Initialize the productsQuery
+	productsQuery := repo.db.Model(&types.Product{})
 
 	// Apply filters
 	for key, value := range filters {
-		query = query.Where(key+" = ?", value)
+		productsQuery = productsQuery.Where(key+" = ?", value)
 	}
 
 	// Count total products for pagination
-	if err := query.Count(&totalCount).Error; err != nil {
+	if err := productsQuery.Count(&totalCount).Error; err != nil {
 		return nil, 0, err
 	}
 
 	// Apply pagination
-	_ = (page - 1) * pageSize
-	if err := query.Preload("Manufacturer").Preload("Categories").Preload("Characteristics").
-		Find(&products).Error; err != nil {
+	offset := (page - 1) * pageSize
+	// Сначала получаем список продуктов
+	if err := productsQuery.Limit(pageSize).Offset(offset).Find(&products).Error; err != nil {
 		return nil, 0, err
+	}
+
+	// Затем загружаем ассоциации для каждого продукта
+	for i := range products {
+		manufacturerQuery := repo.db.Model(&types.Manufacturer{})
+		if err := manufacturerQuery.First(&products[i].Manufacturer, products[i].ManufacturerID).Error; err != nil {
+			return nil, 0, err
+		}
+		categoryQuery := repo.db.Model(&types.Category{})
+		if err := categoryQuery.Select("category.*").
+			Joins("JOIN product_category ON product_category.category_id = category.category_id").
+			Joins("JOIN product ON product.product_id = product_category.product_id").
+			Find(&products[i].Category, products[i].ProductID).Error; err != nil {
+			return nil, 0, err
+		}
+		characteristicQuery := repo.db.Model(&types.Characteristic{})
+		if err := characteristicQuery.Select("characteristic.*, product_characteristic.value").
+			Joins("JOIN product_characteristic ON "+
+				"product_characteristic.characteristic_id = characteristic.characteristic_id").
+			Joins("JOIN product ON product.product_id = product_characteristic.product_id").
+			Find(&products[i].Characteristic, products[i].ProductID).Error; err != nil {
+			return nil, 0, err
+		}
 	}
 
 	return products, totalCount, nil
