@@ -10,7 +10,9 @@ type Product struct {
 	ManufacturerID uint   `gorm:"not null" json:"manufacturer_id"`    // Foreign key to Manufacturer
 
 	// Associations
-	Manufacturer   *Manufacturer           `gorm:"foreignKey:ManufacturerID;references:ManufacturerID"` // Belongs to Manufacturer
-	Category       []ProductCategory       // Many-to-many with Category
-	Characteristic []ProductCharacteristic // Many-to-many with Characteristic
+	Manufacturer   *Manufacturer `gorm:"foreignKey:ManufacturerID;references:ManufacturerID"`
+	Category       []ProductCategory
+	Characteristic []ProductCharacteristic
+
+	Cost []ProductCost
 }

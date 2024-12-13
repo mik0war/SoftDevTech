@@ -3,15 +3,10 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"online-shop-API/internal/data"
 	"online-shop-API/internal/types"
 	"online-shop-API/internal/utils"
 	"strconv"
 )
-
-type ProductHandler struct {
-	productRepo data.Repository
-}
 
 // @Summary Получить все товары
 // @Description Возвращает список всех товаров
@@ -19,7 +14,7 @@ type ProductHandler struct {
 // @Produce json
 // @Success 200 {array} types.Product
 // @Router /products [get]
-func (handler *ProductHandler) getProducts(c *gin.Context) {
+func (handler *Handler) getProducts(c *gin.Context) {
 	params := c.Request.URL.Query()
 
 	page := utils.GetQueryParam(params,
@@ -67,7 +62,7 @@ func (handler *ProductHandler) getProducts(c *gin.Context) {
 // @Success 200 {object} types.Product
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [get]
-func (handler *ProductHandler) getProduct(c *gin.Context) {
+func (handler *Handler) getProduct(c *gin.Context) {
 	id := c.Param("id")
 	filters := map[string]interface{}{
 		"product.product_id": id,
@@ -90,7 +85,7 @@ func (handler *ProductHandler) getProduct(c *gin.Context) {
 // @Success 201 {object} types.Product
 // @Failure 400 {object} types.ErrorResponse
 // @Router /products [post]
-func (handler *ProductHandler) createProduct(c *gin.Context) {
+func (handler *Handler) createProduct(c *gin.Context) {
 	var product types.Product
 	if err := c.BindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "invalid request"})
@@ -113,7 +108,7 @@ func (handler *ProductHandler) createProduct(c *gin.Context) {
 // @Success 200 {object} types.Product
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [delete]
-func (handler *ProductHandler) deleteProduct(c *gin.Context) {
+func (handler *Handler) deleteProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	err := handler.productRepo.DeleteProduct(uint(id))
@@ -137,7 +132,7 @@ func (handler *ProductHandler) deleteProduct(c *gin.Context) {
 // @Success 202 {object} types.SuccessResponse
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [put]
-func (handler *ProductHandler) updateProduct(c *gin.Context) {
+func (handler *Handler) updateProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	var product types.Product
 	if err := c.BindJSON(&product); err != nil {
@@ -152,4 +147,63 @@ func (handler *ProductHandler) updateProduct(c *gin.Context) {
 			types.ErrorResponse{Error: err.Error() + "new one"})
 	}
 	c.JSON(http.StatusAccepted, newProduct)
+}
+
+// @Summary Добавить стоимость товара
+// @Description Добавляет новую стоимость для существующего товара
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path string true "ID товара"
+// @Param cost body types.ProductCost true "Информация о стоимости"
+// @Success 201 {object} types.SuccessResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 503 {object} types.ErrorResponse
+// @Router /products/{id}/cost [post]
+func (handler *Handler) addCost(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var cost types.ProductCost
+	if err := c.BindJSON(&cost); err != nil {
+		c.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "invalid request"})
+		return
+	}
+
+	err := handler.productRepo.AddCostToProduct(id, &cost)
+
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, types.ErrorResponse{Error: err.Error()})
+	} else {
+		c.JSON(http.StatusCreated, types.SuccessResponse{Message: "ok"})
+	}
+}
+
+// @Summary Добавить категорию товара
+// @Description Добавляет новую категорию для существующего товара
+// @Tags products
+// @Produce json
+// @Param id path string true "ID товара"
+// @Param category query string true "Название категории"
+// @Success 201 {object} types.SuccessResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Failure 503 {object} types.ErrorResponse
+// @Router /products/{id}/category [post]
+func (handler *Handler) addCategory(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	params := c.Request.URL.Query()
+
+	categoryName := utils.GetQueryParam(params,
+		"category",
+		"ALL",
+		func(value string, insteadValue string) bool {
+			return value == ""
+		},
+		utils.GetString)
+
+	err := handler.productRepo.AddCategoryToProduct(id, categoryName)
+
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, types.ErrorResponse{Error: err.Error()})
+	} else {
+		c.JSON(http.StatusCreated, types.SuccessResponse{Message: "ok"})
+	}
 }

@@ -6,7 +6,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "online-shop-API/docs"
 	"online-shop-API/internal/data"
-	"online-shop-API/internal/types"
 )
 
 // @title           Online shop API Swagger
@@ -29,37 +28,49 @@ func main() {
 	// Создаем новый роутер Gin
 	data.InitDB()
 	repository := data.NewProductRepository(data.Db)
-	productHandler := ProductHandler{*repository}
+	handler := Handler{*repository}
 
 	router := gin.Default()
 
-	router.POST("/login", login)
-	router.POST("/refresh", refresh)
-	router.POST("/registration", registration)
+	router.POST("/auth/login", handler.login)
+	router.POST("/auth/refresh", refresh)
+	router.POST("/auth/register", handler.registration)
 
 	adminGroup := router.Group("/")
-	adminRole := types.Role{Name: "admin"}
-	adminGroup.Use(authMiddleware(adminRole))
+	adminRole, err := repository.GetRole("Admin")
+	if err != nil {
+		return
+	}
+	adminGroup.Use(authMiddleware(*adminRole))
 	{
-		adminGroup.POST("/products/", productHandler.createProduct)
-		adminGroup.DELETE("/products/:id", productHandler.deleteProduct)
-		adminGroup.PUT("/products/:id", productHandler.updateProduct)
+		adminGroup.POST("/products/", handler.createProduct)
+		adminGroup.POST("/products/:id/cost", handler.addCost)
+		adminGroup.POST("/products/:id/category", handler.addCategory)
+		adminGroup.DELETE("/products/:id", handler.deleteProduct)
+		adminGroup.PUT("/products/:id", handler.updateProduct)
 	}
 
 	userGroup := router.Group("/")
-	userRole := types.Role{Name: "user"}
-	userGroup.Use(authMiddleware(userRole))
+	userRole, err := repository.GetRole("User")
+	if err != nil {
+		return
+	}
+	userGroup.Use(authMiddleware(*userRole))
 	{
-		userGroup.GET("/products", productHandler.getProducts)
-		userGroup.GET("/products/:id", productHandler.getProduct)
+		userGroup.GET("/products", handler.getProducts)
+		userGroup.GET("/products/:id", handler.getProduct)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Запускаем сервер на порту 8080
-	err := router.Run(":8080")
+	err = router.Run(":8080")
 	if err != nil {
 		return
 	}
 
+}
+
+type Handler struct {
+	productRepo data.Repository
 }

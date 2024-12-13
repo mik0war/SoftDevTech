@@ -3,22 +3,24 @@ package types
 import "github.com/dgrijalva/jwt-go"
 
 type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Roles    []Role `json:"role"`
-}
+	UserId   int64  `gorm:"primaryKey;autoIncrement"`
+	Login    string `json:"username"`
+	PassHash string `json:"password"`
+	Email    string `json:"email"`
 
-func (u User) Equal(other User) bool {
-	return u.Username == other.Username && u.Password == other.Password
+	Role []Role `gorm:"many2many:user_role"`
 }
 
 type Role struct {
-	Name string `json:"name"`
+	RoleName    string `json:"name"`
+	RoleID      uint   `gorm:"primaryKey" json:"id"`
+	AccessLevel uint   `json:"access_level"`
 }
 
 type Credentials struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Email    string `json:"email"`
 	Roles    []Role `json:"role"`
 }
 

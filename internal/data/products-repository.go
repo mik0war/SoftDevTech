@@ -47,6 +47,7 @@ func (repo *Repository) GetProducts(
 		Preload("Manufacturer").
 		Preload("Category.Category").
 		Preload("Characteristic.Characteristic").
+		Preload("Cost").
 		Limit(pageSize).
 		Offset(offset).
 		Find(&products).Error; err != nil {
@@ -73,13 +74,67 @@ func (repo *Repository) AddProduct(product *types.Product) (*types.Product, erro
 		return nil, err
 	}
 
-	err := repo.SubscribeProduct(product.ProductID, 0)
+	err := repo.SubscribeProductCategory(product.ProductID, 0)
 	if err != nil {
 		return nil, err
 	}
 
 	// Возвращаем созданный продукт
 	return product, nil
+}
+
+func (repo *Repository) AddCostToProduct(id int, newCost *types.ProductCost) error {
+	var product types.Product
+	if err := repo.db.
+		First(&product, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("product not found")
+		}
+		return err
+	}
+
+	newCost.ProductId = product.ProductID
+
+	if err := repo.db.Create(&newCost).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *Repository) AddCategoryToProduct(id int, categoryName string) error {
+	var product types.Product
+	if err := repo.db.
+		First(&product, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("product not found")
+		}
+		return err
+	}
+
+	var category types.Category
+	if err := repo.db.FirstOrCreate(&category, types.Category{Name: categoryName}).Error; err != nil {
+		return errors.New("failed to find or create category")
+	}
+
+	// Проверить, не добавлена ли категория уже к продукту
+	for _, c := range product.Category {
+		if c.CategoryID == category.CategoryID {
+			return errors.New("category already added to product")
+		}
+	}
+
+	newProductCategory := types.ProductCategory{
+		ProductID:  product.ProductID,
+		CategoryID: category.CategoryID,
+		Category:   category,
+	}
+	// Добавить категорию к продукту
+	if err := repo.db.Model(&product).Association("Category").Append(&newProductCategory); err != nil {
+		return errors.New("failed to add category to product")
+	}
+
+	return nil
 }
 
 // UpdateProduct обновляет существующий продукт в базе данных.
@@ -89,7 +144,10 @@ func (repo *Repository) UpdateProduct(
 ) (*types.Product, error) {
 	// Проверяем, существует ли продукт
 	var product types.Product
-	if err := repo.db.First(&product, productID).Error; err != nil {
+	if err := repo.db.
+		Preload("Category.Category").
+		Preload("Characteristic.Characteristic").
+		First(&product, productID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("product not found")
 		}
@@ -119,6 +177,10 @@ func (repo *Repository) UpdateProduct(
 
 	if updatedData.Characteristic != nil {
 		product.Characteristic = updatedData.Characteristic
+	}
+
+	if updatedData.Cost != nil {
+		product.Cost = updatedData.Cost
 	}
 
 	// Сохраняем изменения
