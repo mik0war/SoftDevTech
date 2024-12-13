@@ -5,10 +5,11 @@ import (
 	"gorm.io/gorm"
 	"online-shop-API/internal/types"
 	_ "strconv"
+	"time"
 )
 
-// NewProductRepository creates a new instance of Repository.
-func NewProductRepository(db *gorm.DB) *Repository {
+// NewRepository creates a new instance of Repository.
+func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{db: db}
 }
 
@@ -63,7 +64,16 @@ func (repo *Repository) AddProduct(product *types.Product) (*types.Product, erro
 	if product.Name == "" {
 		return nil, errors.New("product name is required")
 	}
+	if product.ManufacturerID == 0 {
+		return nil, errors.New("manufacturer is required")
+	}
 
+	var isManufacturerExists bool
+	repo.db.Raw("SELECT 1 FROM Manufacturer WHERE manufacturer_id = ?", product.ManufacturerID).Scan(&isManufacturerExists)
+
+	if !isManufacturerExists {
+		return nil, errors.New("manufacturer missing in db")
+	}
 	//Если статус не установлен, устанавливается в активный
 	if product.Status == "" {
 		product.Status = "ACTIVE"
@@ -74,7 +84,7 @@ func (repo *Repository) AddProduct(product *types.Product) (*types.Product, erro
 		return nil, err
 	}
 
-	err := repo.SubscribeProductCategory(product.ProductID, 0)
+	err := repo.SubscribeProductCategory(product.ProductID, "ALL")
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +105,9 @@ func (repo *Repository) AddCostToProduct(id int, newCost *types.ProductCost) err
 
 	newCost.ProductId = product.ProductID
 
+	if newCost.StartTimeStamp == "" {
+		newCost.StartTimeStamp = time.Now().Format("2006-01-02 15:04:05")
+	}
 	if err := repo.db.Create(&newCost).Error; err != nil {
 		return err
 	}
@@ -147,6 +160,8 @@ func (repo *Repository) UpdateProduct(
 	if err := repo.db.
 		Preload("Category.Category").
 		Preload("Characteristic.Characteristic").
+		Preload("Cost").
+		Preload("Manufacturer").
 		First(&product, productID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("product not found")
@@ -182,7 +197,6 @@ func (repo *Repository) UpdateProduct(
 	if updatedData.Cost != nil {
 		product.Cost = updatedData.Cost
 	}
-
 	// Сохраняем изменения
 	if err := repo.db.Save(&product).Error; err != nil {
 		return nil, err

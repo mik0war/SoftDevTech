@@ -1,9 +1,26 @@
 definitions:
   types.Category:
     properties:
-      id:
+      categoryID:
+        description: Primary key
+        type: integer
+      description:
+        description: Description of the category
         type: string
       name:
+        description: Category name
+        type: string
+    type: object
+  types.Characteristic:
+    properties:
+      category:
+        description: Name of category
+        type: string
+      characteristicID:
+        description: Primary key
+        type: integer
+      name:
+        description: Name of the characteristic
         type: string
     type: object
   types.ErrorResponse:
@@ -11,23 +28,156 @@ definitions:
       error:
         type: string
     type: object
+  types.JwtResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  types.Manufacturer:
+    properties:
+      description:
+        description: Description of the manufacturer
+        type: string
+      manufacturerID:
+        description: Primary key
+        type: integer
+      name:
+        description: Manufacturer name
+        type: string
+    type: object
+  types.Order:
+    properties:
+      order_id:
+        description: Уникальный идентификатор заказа
+        type: integer
+      products:
+        description: Список продуктов в заказе
+        items:
+          $ref: '#/definitions/types.ProductOrder'
+        type: array
+      status:
+        description: Статус заказа
+        type: string
+      time_stamp:
+        description: Временная метка создания заказа
+        type: string
+    type: object
+  types.OrderData:
+    properties:
+      products:
+        items:
+          properties:
+            count:
+              type: integer
+            product_id:
+              type: integer
+          type: object
+        type: array
+    type: object
   types.Product:
     properties:
       category:
+        items:
+          $ref: '#/definitions/types.ProductCategory'
+        type: array
+      characteristic:
+        items:
+          $ref: '#/definitions/types.ProductCharacteristic'
+        type: array
+      cost:
+        items:
+          $ref: '#/definitions/types.ProductCost'
+        type: array
+      description:
+        description: Product description
+        type: string
+      imageLink:
+        description: URL to the product image
+        type: string
+      manufacturer:
+        allOf:
+        - $ref: '#/definitions/types.Manufacturer'
+        description: Associations
+      manufacturer_id:
+        description: Foreign key to Manufacturer
+        type: integer
+      name:
+        description: Product name
+        type: string
+      product_id:
+        description: Primary key
+        type: integer
+      status:
+        description: Status
+        type: string
+    type: object
+  types.ProductCategory:
+    properties:
+      category:
         $ref: '#/definitions/types.Category'
+    type: object
+  types.ProductCharacteristic:
+    properties:
+      characteristic:
+        $ref: '#/definitions/types.Characteristic'
+      value:
+        type: string
+    type: object
+  types.ProductCost:
+    properties:
+      costId:
+        type: integer
+      currency:
+        type: string
+      productId:
+        type: integer
+      startTimeStamp:
+        type: string
+      value:
+        type: number
+    type: object
+  types.ProductData:
+    properties:
       description:
         type: string
-      id:
+      imageLink:
         type: string
-      image:
-        type: string
+      manufacturer_id:
+        type: integer
       name:
         type: string
+      status:
+        type: string
+    type: object
+  types.ProductOrder:
+    properties:
+      count:
+        description: Количество продукта
+        type: integer
+      order_id:
+        description: ID заказа (внешний ключ)
+        type: integer
+      product:
+        $ref: '#/definitions/types.Product'
+      product_id:
+        description: ID продукта (внешний ключ)
+        type: integer
     type: object
   types.SuccessResponse:
     properties:
       message:
         example: ok
+        type: string
+    type: object
+  types.UserData:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
         type: string
     type: object
 externalDocs:
@@ -47,9 +197,173 @@ info:
   title: Online shop API Swagger
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Авторизует пользователя и возвращает токены
+      parameters:
+      - description: Учётные данные пользователя
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.JwtResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Вход пользователя
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      description: Обновляет токен доступа по действующему Refresh-токену
+      parameters:
+      - description: Токен для обновления
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Обновить токен доступа
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует нового пользователя в системе
+      parameters:
+      - description: Учётные данные пользователя
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/types.UserData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Регистрация нового пользователя
+      tags:
+      - auth
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Создает заказ с указанным списком продуктов
+      parameters:
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Информация о заказе
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/types.OrderData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Успешное создание заказа
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Неверный запрос (например, пустой список продуктов)
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Ошибка на стороне сервера (например, не удалось создать заказ
+            или добавить продукт)
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Создать новый заказ
+      tags:
+      - orders
+  /orders/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Извлекает детали конкретного заказа, включая продукты, связанные
+        с ним.
+      parameters:
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID заказа
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Детали заказа
+          schema:
+            $ref: '#/definitions/types.Order'
+        "400":
+          description: Неверный ID заказа
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "404":
+          description: Заказ не найден
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "500":
+          description: Ошибка сервера
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Получить детали заказа по ID
+      tags:
+      - orders
   /products:
     get:
       description: Возвращает список всех товаров
+      parameters:
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -67,12 +381,17 @@ paths:
       - application/json
       description: Добавляет новый товар в список
       parameters:
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Информация о товаре
         in: body
         name: product
         required: true
         schema:
-          $ref: '#/definitions/types.Product'
+          $ref: '#/definitions/types.ProductData'
       produces:
       - application/json
       responses:
@@ -91,6 +410,11 @@ paths:
     delete:
       description: Удаляет товар по ID
       parameters:
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: ID товара
         in: path
         name: id
@@ -102,7 +426,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Product'
+            $ref: '#/definitions/types.ProductData'
         "404":
           description: Not Found
           schema:
@@ -113,6 +437,11 @@ paths:
     get:
       description: Возвращает информацию о товаре по его ID
       parameters:
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: ID товара
         in: path
         name: id
@@ -137,6 +466,11 @@ paths:
       - application/json
       description: Обновляет данные товара по ID
       parameters:
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: ID товара
         in: path
         name: id
@@ -164,6 +498,83 @@ paths:
           schema:
             $ref: '#/definitions/types.ErrorResponse'
       summary: Обновить существующий товар
+      tags:
+      - products
+  /products/{id}/category:
+    post:
+      description: Добавляет новую категорию для существующего товара
+      parameters:
+      - description: ID товара
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Название категории
+        in: query
+        name: category
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Добавить категорию товара
+      tags:
+      - products
+  /products/{id}/cost:
+    post:
+      consumes:
+      - application/json
+      description: Добавляет новую стоимость для существующего товара
+      parameters:
+      - description: ID товара
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Токен
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Информация о стоимости
+        in: body
+        name: cost
+        required: true
+        schema:
+          $ref: '#/definitions/types.ProductCost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Добавить стоимость товара
       tags:
       - products
 swagger: "2.0"

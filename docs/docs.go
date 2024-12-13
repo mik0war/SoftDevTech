@@ -24,6 +24,243 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Авторизует пользователя и возвращает токены",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Вход пользователя",
+                "parameters": [
+                    {
+                        "description": "Учётные данные пользователя",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UserData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.JwtResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "Обновляет токен доступа по действующему Refresh-токену",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Обновить токен доступа",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Токен для обновления",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Регистрирует нового пользователя в системе",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Регистрация нового пользователя",
+                "parameters": [
+                    {
+                        "description": "Учётные данные пользователя",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UserData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders": {
+            "post": {
+                "description": "Создает заказ с указанным списком продуктов",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Создать новый заказ",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Информация о заказе",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.OrderData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Успешное создание заказа",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос (например, пустой список продуктов)",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка на стороне сервера (например, не удалось создать заказ или добавить продукт)",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}": {
+            "get": {
+                "description": "Извлекает детали конкретного заказа, включая продукты, связанные с ним.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Получить детали заказа по ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID заказа",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Детали заказа",
+                        "schema": {
+                            "$ref": "#/definitions/types.Order"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный ID заказа",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Заказ не найден",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/products": {
             "get": {
                 "description": "Возвращает список всех товаров",
@@ -34,6 +271,15 @@ const docTemplate = `{
                     "products"
                 ],
                 "summary": "Получить все товары",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -60,12 +306,19 @@ const docTemplate = `{
                 "summary": "Создать новый товар",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Информация о товаре",
                         "name": "product",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.Product"
+                            "$ref": "#/definitions/types.ProductData"
                         }
                     }
                 ],
@@ -96,6 +349,13 @@ const docTemplate = `{
                 ],
                 "summary": "Получить товар по ID",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "ID товара",
@@ -132,6 +392,13 @@ const docTemplate = `{
                 ],
                 "summary": "Обновить существующий товар",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "ID товара",
@@ -182,6 +449,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "ID товара",
                         "name": "id",
                         "in": "path",
@@ -192,11 +466,126 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Product"
+                            "$ref": "#/definitions/types.ProductData"
                         }
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/products/{id}/category": {
+            "post": {
+                "description": "Добавляет новую категорию для существующего товара",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "Добавить категорию товара",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID товара",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Название категории",
+                        "name": "category",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/products/{id}/cost": {
+            "post": {
+                "description": "Добавляет новую стоимость для существующего товара",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "Добавить стоимость товара",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID товара",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Токен",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Информация о стоимости",
+                        "name": "cost",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ProductCost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
                         "schema": {
                             "$ref": "#/definitions/types.ErrorResponse"
                         }
@@ -209,10 +598,33 @@ const docTemplate = `{
         "types.Category": {
             "type": "object",
             "properties": {
-                "id": {
+                "categoryID": {
+                    "description": "Primary key",
+                    "type": "integer"
+                },
+                "description": {
+                    "description": "Description of the category",
                     "type": "string"
                 },
                 "name": {
+                    "description": "Category name",
+                    "type": "string"
+                }
+            }
+        },
+        "types.Characteristic": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "description": "Name of category",
+                    "type": "string"
+                },
+                "characteristicID": {
+                    "description": "Primary key",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Name of the characteristic",
                     "type": "string"
                 }
             }
@@ -225,23 +637,208 @@ const docTemplate = `{
                 }
             }
         },
+        "types.JwtResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.Manufacturer": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "Description of the manufacturer",
+                    "type": "string"
+                },
+                "manufacturerID": {
+                    "description": "Primary key",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Manufacturer name",
+                    "type": "string"
+                }
+            }
+        },
+        "types.Order": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "description": "Уникальный идентификатор заказа",
+                    "type": "integer"
+                },
+                "products": {
+                    "description": "Список продуктов в заказе",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.ProductOrder"
+                    }
+                },
+                "status": {
+                    "description": "Статус заказа",
+                    "type": "string"
+                },
+                "time_stamp": {
+                    "description": "Временная метка создания заказа",
+                    "type": "string"
+                }
+            }
+        },
+        "types.OrderData": {
+            "type": "object",
+            "properties": {
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "count": {
+                                "type": "integer"
+                            },
+                            "product_id": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "types.Product": {
             "type": "object",
             "properties": {
                 "category": {
-                    "$ref": "#/definitions/types.Category"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.ProductCategory"
+                    }
                 },
+                "characteristic": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.ProductCharacteristic"
+                    }
+                },
+                "cost": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.ProductCost"
+                    }
+                },
+                "description": {
+                    "description": "Product description",
+                    "type": "string"
+                },
+                "imageLink": {
+                    "description": "URL to the product image",
+                    "type": "string"
+                },
+                "manufacturer": {
+                    "description": "Associations",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/types.Manufacturer"
+                        }
+                    ]
+                },
+                "manufacturer_id": {
+                    "description": "Foreign key to Manufacturer",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Product name",
+                    "type": "string"
+                },
+                "product_id": {
+                    "description": "Primary key",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "Status",
+                    "type": "string"
+                }
+            }
+        },
+        "types.ProductCategory": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/types.Category"
+                }
+            }
+        },
+        "types.ProductCharacteristic": {
+            "type": "object",
+            "properties": {
+                "characteristic": {
+                    "$ref": "#/definitions/types.Characteristic"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.ProductCost": {
+            "type": "object",
+            "properties": {
+                "costId": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "integer"
+                },
+                "startTimeStamp": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "types.ProductData": {
+            "type": "object",
+            "properties": {
                 "description": {
                     "type": "string"
                 },
-                "id": {
+                "imageLink": {
                     "type": "string"
                 },
-                "image": {
-                    "type": "string"
+                "manufacturer_id": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.ProductOrder": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "description": "Количество продукта",
+                    "type": "integer"
+                },
+                "order_id": {
+                    "description": "ID заказа (внешний ключ)",
+                    "type": "integer"
+                },
+                "product": {
+                    "$ref": "#/definitions/types.Product"
+                },
+                "product_id": {
+                    "description": "ID продукта (внешний ключ)",
+                    "type": "integer"
                 }
             }
         },
@@ -251,6 +848,20 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "ok"
+                }
+            }
+        },
+        "types.UserData": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

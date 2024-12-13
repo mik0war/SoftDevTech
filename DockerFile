@@ -1,0 +1,20 @@
+# Указываем базовый образ для Go
+FROM golang:1.20-alpine
+
+# Устанавливаем необходимые зависимости
+RUN apk add --no-cache git
+
+# Указываем рабочую директорию
+WORKDIR /app
+
+# Копируем файлы приложения
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+# Компилируем приложение
+RUN go build -o main .
+
+# Указываем команду для запуска приложения
+CMD ["./main"]

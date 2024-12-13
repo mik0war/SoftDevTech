@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"github.com/gin-gonic/gin"
@@ -12,9 +12,10 @@ import (
 // @Description Возвращает список всех товаров
 // @Tags products
 // @Produce json
+// @Param Authorization header string true "Токен"
 // @Success 200 {array} types.Product
 // @Router /products [get]
-func (handler *Handler) getProducts(c *gin.Context) {
+func (handler *Handler) GetProducts(c *gin.Context) {
 	params := c.Request.URL.Query()
 
 	page := utils.GetQueryParam(params,
@@ -46,7 +47,7 @@ func (handler *Handler) getProducts(c *gin.Context) {
 		"category.name": category,
 	}
 
-	returnedProducts, _, err := handler.productRepo.GetProducts(filters, page, pageSize)
+	returnedProducts, _, err := handler.ProductRepo.GetProducts(filters, page, pageSize)
 	if err == nil {
 		c.JSON(http.StatusOK, returnedProducts)
 	} else {
@@ -58,16 +59,17 @@ func (handler *Handler) getProducts(c *gin.Context) {
 // @Description Возвращает информацию о товаре по его ID
 // @Tags products
 // @Produce json
+// @Param Authorization header string true "Токен"
 // @Param id path string true "ID товара"
 // @Success 200 {object} types.Product
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [get]
-func (handler *Handler) getProduct(c *gin.Context) {
+func (handler *Handler) GetProduct(c *gin.Context) {
 	id := c.Param("id")
 	filters := map[string]interface{}{
 		"product.product_id": id,
 	}
-	product, totalSize, err := handler.productRepo.GetProducts(filters, 1, 1)
+	product, totalSize, err := handler.ProductRepo.GetProducts(filters, 1, 1)
 
 	if err == nil && totalSize > 0 {
 		c.JSON(http.StatusOK, product)
@@ -80,38 +82,41 @@ func (handler *Handler) getProduct(c *gin.Context) {
 // @Description Добавляет новый товар в список
 // @Tags products
 // @Accept json
+// @Param Authorization header string true "Токен"
 // @Produce json
-// @Param product body types.Product true "Информация о товаре"
+// @Param product body types.ProductData true "Информация о товаре"
 // @Success 201 {object} types.Product
 // @Failure 400 {object} types.ErrorResponse
 // @Router /products [post]
-func (handler *Handler) createProduct(c *gin.Context) {
+func (handler *Handler) CreateProduct(c *gin.Context) {
 	var product types.Product
 	if err := c.BindJSON(&product); err != nil {
 		c.JSON(http.StatusBadRequest, types.ErrorResponse{Error: "invalid request"})
 		return
 	}
 
-	answer, err := handler.productRepo.AddProduct(&product)
+	answer, err := handler.ProductRepo.AddProduct(&product)
 
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, types.ErrorResponse{Error: err.Error()})
+	} else {
+		c.JSON(http.StatusCreated, answer)
 	}
-	c.JSON(http.StatusCreated, answer)
 }
 
 // @Summary Удалить товар
 // @Description Удаляет товар по ID
 // @Tags products
 // @Produce json
+// @Param Authorization header string true "Токен"
 // @Param id path string true "ID товара"
-// @Success 200 {object} types.Product
+// @Success 200 {object} types.ProductData
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [delete]
-func (handler *Handler) deleteProduct(c *gin.Context) {
+func (handler *Handler) DeleteProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	err := handler.productRepo.DeleteProduct(uint(id))
+	err := handler.ProductRepo.DeleteProduct(uint(id))
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, types.ErrorResponse{Error: err.Error()})
@@ -126,13 +131,14 @@ func (handler *Handler) deleteProduct(c *gin.Context) {
 // @Tags products
 // @Accept json
 // @Produce json
+// @Param Authorization header string true "Токен"
 // @Param id path string true "ID товара"
 // @Param product body types.Product true "Новые данные товара"
 // @Success 201 {object} types.SuccessResponse
 // @Success 202 {object} types.SuccessResponse
 // @Failure 404 {object} types.ErrorResponse
 // @Router /products/{id} [put]
-func (handler *Handler) updateProduct(c *gin.Context) {
+func (handler *Handler) UpdateProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	var product types.Product
 	if err := c.BindJSON(&product); err != nil {
@@ -140,7 +146,7 @@ func (handler *Handler) updateProduct(c *gin.Context) {
 		return
 	}
 
-	newProduct, err := handler.productRepo.UpdateProduct(uint(id), &product)
+	newProduct, err := handler.ProductRepo.UpdateProduct(uint(id), &product)
 
 	if err != nil {
 		c.JSON(http.StatusCreated,
@@ -155,12 +161,13 @@ func (handler *Handler) updateProduct(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "ID товара"
+// @Param Authorization header string true "Токен"
 // @Param cost body types.ProductCost true "Информация о стоимости"
 // @Success 201 {object} types.SuccessResponse
 // @Failure 400 {object} types.ErrorResponse
 // @Failure 503 {object} types.ErrorResponse
 // @Router /products/{id}/cost [post]
-func (handler *Handler) addCost(c *gin.Context) {
+func (handler *Handler) AddCost(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	var cost types.ProductCost
 	if err := c.BindJSON(&cost); err != nil {
@@ -168,7 +175,7 @@ func (handler *Handler) addCost(c *gin.Context) {
 		return
 	}
 
-	err := handler.productRepo.AddCostToProduct(id, &cost)
+	err := handler.ProductRepo.AddCostToProduct(id, &cost)
 
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, types.ErrorResponse{Error: err.Error()})
@@ -182,12 +189,13 @@ func (handler *Handler) addCost(c *gin.Context) {
 // @Tags products
 // @Produce json
 // @Param id path string true "ID товара"
+// @Param Authorization header string true "Токен"
 // @Param category query string true "Название категории"
 // @Success 201 {object} types.SuccessResponse
 // @Failure 400 {object} types.ErrorResponse
 // @Failure 503 {object} types.ErrorResponse
 // @Router /products/{id}/category [post]
-func (handler *Handler) addCategory(c *gin.Context) {
+func (handler *Handler) AddCategory(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	params := c.Request.URL.Query()
 
@@ -199,7 +207,7 @@ func (handler *Handler) addCategory(c *gin.Context) {
 		},
 		utils.GetString)
 
-	err := handler.productRepo.AddCategoryToProduct(id, categoryName)
+	err := handler.ProductRepo.AddCategoryToProduct(id, categoryName)
 
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, types.ErrorResponse{Error: err.Error()})

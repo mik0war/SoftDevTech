@@ -6,6 +6,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "online-shop-API/docs"
 	"online-shop-API/internal/data"
+	"online-shop-API/internal/handlers"
 )
 
 // @title           Online shop API Swagger
@@ -27,27 +28,30 @@ import (
 func main() {
 	// Создаем новый роутер Gin
 	data.InitDB()
-	repository := data.NewProductRepository(data.Db)
-	handler := Handler{*repository}
+	repository := data.NewRepository(data.Db)
+	handler := handlers.Handler{ProductRepo: *repository}
 
 	router := gin.Default()
 
-	router.POST("/auth/login", handler.login)
-	router.POST("/auth/refresh", refresh)
-	router.POST("/auth/register", handler.registration)
+	router.POST("/auth/login", handler.Login)
+	router.POST("/auth/refresh", handlers.Refresh)
+	router.POST("/auth/register", handler.Registration)
 
 	adminGroup := router.Group("/")
 	adminRole, err := repository.GetRole("Admin")
 	if err != nil {
 		return
 	}
-	adminGroup.Use(authMiddleware(*adminRole))
+
+	adminGroup.Use(handlers.AuthMiddleware(*adminRole))
 	{
-		adminGroup.POST("/products/", handler.createProduct)
-		adminGroup.POST("/products/:id/cost", handler.addCost)
-		adminGroup.POST("/products/:id/category", handler.addCategory)
-		adminGroup.DELETE("/products/:id", handler.deleteProduct)
-		adminGroup.PUT("/products/:id", handler.updateProduct)
+		adminGroup.GET("/orders/:id", handler.GetOrder)
+
+		adminGroup.POST("/products/", handler.CreateProduct)
+		adminGroup.POST("/products/:id/cost", handler.AddCost)
+		adminGroup.POST("/products/:id/category", handler.AddCategory)
+		adminGroup.DELETE("/products/:id", handler.DeleteProduct)
+		adminGroup.PUT("/products/:id", handler.UpdateProduct)
 	}
 
 	userGroup := router.Group("/")
@@ -55,10 +59,11 @@ func main() {
 	if err != nil {
 		return
 	}
-	userGroup.Use(authMiddleware(*userRole))
+	userGroup.Use(handlers.AuthMiddleware(*userRole))
 	{
-		userGroup.GET("/products", handler.getProducts)
-		userGroup.GET("/products/:id", handler.getProduct)
+		userGroup.GET("/products", handler.GetProducts)
+		userGroup.GET("/products/:id", handler.GetProduct)
+		userGroup.POST("/orders", handler.CreateOrder)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -69,8 +74,4 @@ func main() {
 		return
 	}
 
-}
-
-type Handler struct {
-	productRepo data.Repository
 }
